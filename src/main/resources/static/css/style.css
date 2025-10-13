@@ -1,0 +1,203 @@
+/* =================================== */
+/* ESTILOS GERAIS                      */
+/* =================================== */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background: linear-gradient(135deg, #49c6e5 0%, #1a75ff 100%);
+    background-attachment: fixed; /* Para o degradê não rolar com a página */
+}
+
+/* ======================================================= */
+/* PÁGINAS DE AUTENTICAÇÃO (LOGIN / CADASTRO)            */
+/* ======================================================= */
+.auth-page .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.auth-page .auth-title {
+    font-size: 3.5rem;
+    color: white;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.auth-page .form-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.auth-page .link { margin-top: 1rem; display: block; color: #555; text-decoration: none; }
+.auth-page .link span { color: #3498db; font-weight: bold; text-decoration: underline; }
+
+.auth-page input {
+    width: 90%; padding: 1rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem;
+}
+
+.auth-page button {
+    width: 95%; padding: 1rem; border: none; border-radius: 8px; background-color: #3498db; color: white; font-size: 1.2rem; cursor: pointer;
+}
+
+/* ======================================================= */
+/* PÁGINAS INTERNAS DA APLICAÇÃO (HOME, NOVO-EVENTO, ETC.) */
+/* ======================================================= */
+.main-header {
+    background: white; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: 70px;
+}
+.main-header .logo a { font-size: 1.8rem; font-weight: bold; color: #1a75ff; text-decoration: none; }
+.main-nav ul { margin: 0; padding: 0; list-style: none; display: flex; }
+.main-nav ul li a { display: block; padding: 25px 20px; text-decoration: none; color: #555; font-weight: bold; border-bottom: 3px solid transparent; }
+.main-nav ul li a:hover { color: #1a75ff; }
+.main-nav ul li a.active { color: #1a75ff; border-bottom: 3px solid #1a75ff; }
+.user-actions { display: flex; align-items: center; }
+.btn-header-create { padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-right: 20px; }
+.user-info span { font-weight: bold; color: #333; }
+.logout-link { color: #e74c3c; text-decoration: none; margin-left: 8px; font-size: 0.9em; }
+
+.container-main { padding: 40px; }
+.main-title { color: white; text-align: center; margin-bottom: 30px; font-size: 2.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+
+.home-container { display: flex; padding: 30px 40px; gap: 30px; }
+.filters-sidebar { flex: 0 0 280px; background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 15px; height: fit-content; }
+.events-section { flex: 1; }
+.event-list { display: flex; flex-direction: column; gap: 20px; }
+.event-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+.event-card h3 { margin-top: 0; color: #3498db; }
+.event-card p { margin-bottom: 5px; line-height: 1.5; }
+.btn-ver-mais { display: inline-block; margin-top: 15px; padding: 8px 15px; background-color: #eee; color: #333; text-decoration: none; border-radius: 5px; }
+
+/* Caixa branca para formulários e conteúdo interno */
+.form-box {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto; /* Centraliza a caixa */
+}
+.event-form .form-group { margin-bottom: 1.5rem; text-align: left; }
+.event-form label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
+.event-form input, .event-form select, .event-form textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; box-sizing: border-box; }
+.btn-submit-form { width: 100%; padding: 1rem; border: none; border-radius: 8px; background-color: #3498db; color: white; font-size: 1.2rem; cursor: pointer; }
+
+
+/* =================================== */
+/* COMPONENTES GLOBAIS (ALERTAS, ETC)  */
+/* =================================== */
+.alert-error, .alert-success {
+    padding: 15px; border-radius: 8px; margin: 0 auto 20px auto; width: 100%; max-width: 400px; box-sizing: border-box; position: relative;
+}
+.alert-error { background-color: #ffdddd; color: #d8000c; border: 1px solid #ffc0c0; }
+.alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.close-btn { position: absolute; top: 10px; right: 15px; font-size: 22px; font-weight: bold; cursor: pointer; color: #666; }
+
+/* ESTILOS DA PÁGINA DE DETALHES DO EVENTO */
+.event-details-container { background: white; border-radius: 15px; padding: 30px 40px; max-width: 900px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+.event-details-container .main-title { color: #333; text-align: left; margin-top: 0; }
+.details-section p { font-size: 1.1rem; line-height: 1.6; }
+.details-section .description-box { background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 15px; border-radius: 5px; white-space: pre-wrap; }
+.details-section a { color: #3498db; text-decoration: none; font-weight: bold; }
+.actions-section, .participants-section, .comments-section { margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; }
+.btn-participar { display: inline-block; padding: 15px 30px; background-color: #2ecc71; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.2rem; cursor: pointer; border: none;}
+
+
+.chart-container {
+    position: relative;
+    margin: 20px auto;
+    height: 400px; /* Altura fixa para o container do gráfico */
+    width: 100%;
+    max-width: 500px; /* Largura máxima para não ficar gigante em telas grandes */
+}
+
+/* Deixa os cards de métrica com um cursor de clique */
+.metric-card {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+
+
+/* =================================== */
+/* AJUSTES FINAIS - MÉTRICAS           */
+/* =================================== */
+
+/* Corrige o bug visual do gráfico */
+.chart-container {
+    position: relative;
+    margin: auto;
+    height: 400px;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Estilo para a lista de detalhes dentro do card */
+.metric-details-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 15px;
+}
+
+/* Organiza o cabeçalho do card (título e botão) */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+.card-header h4 {
+    margin: 0;
+}
+
+/* Estilo para o botão de excluir */
+.btn-delete {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+
+.card-actions {
+    display: flex;
+    gap: 10px; /* Espaço entre os botões */
+}
+
+.btn-edit {
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-decoration: none;
+    line-height: 1.5; /* Alinha o texto do link com o do botão */
+}
+.btn-edit:hover {
+    background-color: #e67e22;
+}

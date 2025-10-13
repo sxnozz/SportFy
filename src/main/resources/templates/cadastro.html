@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SportFy - Cadastro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+    <div class="container">
+        <h1 class="auth-title">SportFy</h1>
+
+        <div th:if="${param.erroSenha}" class="alert-error">
+            <strong>Erro:</strong> As senhas não coincidem.
+            <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+        </div>
+        <div th:if="${param.erroEmail}" class="alert-error">
+            <strong>Erro:</strong> Este e-mail já está cadastrado.
+            <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+        </div>
+        <div th:if="${param.erroNome}" class="alert-error">
+            <strong>Erro:</strong> Este nome de usuário já está em uso.
+            <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+        </div>
+
+        <div class="form-box">
+            <h2>Cadastro</h2>
+            <form th:action="@{/cadastro}" method="post">
+                <input type="text" name="nome" placeholder="Insira seu nome" required>
+                <input type="email" name="email" placeholder="Insira seu email" required>
+                <input type="password" name="senha" placeholder="Crie sua senha" required>
+                <input type="password" name="confirmeSenha" placeholder="Confirme sua senha" required>
+                <button type="submit">Cadastrar</button>
+            </form>
+            <a th:href="@{/login}" class="link">
+                Já tem uma conta? <span>Clique aqui</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

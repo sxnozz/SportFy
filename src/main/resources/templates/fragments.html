@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+    <header class="main-header" th:fragment="header">
+        <div class="logo">
+            <a th:href="@{/}">SportFy</a>
+        </div>
+        <nav class="main-nav">
+            <nav class="main-nav">
+    <ul>
+        <li><a th:href="@{/}" th:classappend="${activePage == 'eventos' ? 'active' : ''}">Eventos</a></li>
+        <li><a href="#" th:classappend="${activePage == 'meusEventos' ? 'active' : ''}">Meus Eventos</a></li>
+        <li><a href="#" th:classappend="${activePage == 'eventosInscritos' ? 'active' : ''}">Eventos Inscritos</a></li>
+<li><a th:href="@{/minhas-metricas}" th:classappend="${activePage == 'minhasMetricas' ? 'active' : ''}">Minhas Métricas</a></li>
+    </ul>
+</nav>
+        </nav>
+        <div class="user-actions">
+            <a th:href="@{/eventos/novo}" class="btn-header-create">Criar Evento</a>
+            <div class="user-info" th:if="${session.usuarioLogado != null}">
+                <span th:text="${'Olá, ' + session.usuarioLogado.nome}"></span>
+                <a th:href="@{/logout}" class="logout-link">(Sair)</a>
+            </div>
+        </div>
+    </header>
+
+</body>
+</html>

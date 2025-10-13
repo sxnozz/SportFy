@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'SportFy - ' + ${evento.modalidade_evento}">Detalhes do Evento</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{fragments :: header}"></div>
+
+    <main class="container-main">
+        <div th:if="${evento}" class="event-details-container">
+            
+            <h2 class="main-title" th:text="${evento.modalidade_evento}" style="text-align: left; color: #333;">Modalidade do Evento</h2>
+
+            <div class="details-section">
+                <p><strong>Criador:</strong> <span th:text="${evento.usuario_criador.nome}"></span></p>
+                <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.data_hora_evento, 'dd/MM/yyyy')} + ' às ' + ${#temporals.format(evento.data_hora_evento, 'HH:mm')}"></span></p>
+                <p>
+                    <strong>Local:</strong> 
+                    <a th:href="@{'https://www.google.com/maps/search/?api=1&query=' + ${evento.lugar}}" 
+                       target="_blank" 
+                       th:text="${evento.lugar}">
+                    </a>
+                </p>
+                <p><strong>Descrição:</strong></p>
+                <p class="description-box" th:text="${evento.descricao}"></p>
+            </div>
+
+           <div class="actions-section">
+    <form th:action="@{/evento/{id}/participar(id=${evento.id_evento})}" method="post">
+        <button type="submit" class="btn-participar">Confirmar Presença</button>
+    </form>
+</div>
+
+<div class="participants-section">
+    <h3 th:text="'Participantes (' + ${evento.participantes.size()} + ')'">Participantes (0)</h3>
+    
+    <div th:if="${evento.participantes.isEmpty()}">
+        <p>Sê o primeiro a participar!</p>
+    </div>
+    
+    <ul th:unless="${evento.participantes.isEmpty()}">
+        <li th:each="participante : ${evento.participantes}" th:text="${participante.nome}">
+            Nome do Participante
+        </li>
+    </ul>
+</div>
+
+           <div class="comments-section">
+    <h3>Comentários</h3>
+
+    <form class="comment-form" th:action="@{/evento/{id}/comentar(id=${evento.id_evento})}" method="post">
+        <textarea name="texto_comentario" placeholder="Adicione um comentário..." required></textarea>
+        <button type="submit">Enviar</button>
+    </form>
+    
+    <hr style="margin: 30px 0;">
+
+    <div class="comment-list">
+        <div th:if="${evento.comentarios.isEmpty()}">
+            <p>Ainda não há comentários. Sê o primeiro a comentar!</p>
+        </div>
+        
+        <div th:unless="${evento.comentarios.isEmpty()}" th:each="comentario : ${evento.comentarios}" class="comment-item">
+            <p>
+                <strong th:text="${comentario.usuario.nome}">Nome do Autor</strong>
+                <span class="comment-date" th:text="' - ' + ${#temporals.format(comentario.horario_comentario, 'dd/MM/yyyy HH:mm')}">Data</span>
+            </p>
+            <p th:text="${comentario.texto_comentario}">Texto do comentário</p>
+        </div>
+    </div>
+</div>
+
+        </div>
+    </main>
+</body>
+</html>

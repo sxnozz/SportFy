@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SportFy - Login</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+    <div class="container">
+        <h1 class="auth-title">SportFy</h1>
+
+        <div th:if="${param.error}" class="alert-error">
+            <strong>Erro:</strong> E-mail ou senha inválidos.
+            <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+        </div>
+        <div th:if="${param.logout}" class="alert-success">
+             Você saiu com sucesso.
+        </div>
+         <div th:if="${param.cadastroSucesso}" class="alert-success">
+            Cadastro realizado com sucesso! Faça o login.
+        </div>
+        
+        <div class="form-box">
+            <h2>Login</h2>
+            <form th:action="@{/login}" method="post">
+                <input type="email" name="email" placeholder="Insira seu email" required>
+                <input type="password" name="senha" placeholder="Insira sua senha" required>
+                <button type="submit">Entrar</button>
+            </form>
+            <a th:href="@{/cadastro}" class="link">
+                Não tem uma conta? <span>Clique aqui</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

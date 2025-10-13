@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SportFy - Editar Métrica</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{fragments :: header}"></div>
+
+    <main class="container-main">
+        <div class="form-box">
+            <h2 style="text-align: center; margin-top: 0;">Editar Métrica</h2>
+            
+            <form th:action="@{/metricas/editar/{id}(id=${metrica.id_metrica})}" th:object="${metrica}" method="post" class="event-form">
+                
+               <div class="form-group">
+    <label>Modalidade:</label>
+    <p style="padding: 12px; background-color: #f2f2f2; border: 1px solid #ccc; border-radius: 5px; margin: 0;">
+        <strong th:text="${metrica.esporte}">Futebol</strong>
+    </p>
+    <input type="hidden" name="esporte" th:value="${metrica.esporte}" />
+    <small style="color: #666;">A modalidade não pode ser alterada após o registro.</small>
+</div>
+                <div class="form-group">
+                    <label for="diaMetrica">Data da Atividade:</label>
+<input type="date" id="diaMetrica" name="diaMetrica" th:value="${#temporals.format(metrica.diaMetrica, 'yyyy-MM-dd')}" required>                </div>
+
+               <div id="metricas_futebol" class="metric-fields" 
+     th:style="${metrica.esporte == 'Futebol' ? 'display:block;' : 'display:none;'}">
+    <div class="form-group"><label>Gols:</label><input type="number" th:field="*{gols}"></div>
+    <div class="form-group"><label>Assistências:</label><input type="number" th:field="*{assistencias_futebol}"></div>
+    <div class="form-group"><label>Desarmes:</label><input type="number" th:field="*{desarmes}"></div>
+</div>
+
+<div id="metricas_basquete" class="metric-fields"
+     th:style="${metrica.esporte == 'Basquete' ? 'display:block;' : 'display:none;'}">
+    <div class="form-group"><label>Pontos:</label><input type="number" th:field="*{pontos_basquete}"></div>
+    <div class="form-group"><label>Assistências:</label><input type="number" th:field="*{assistencias_basquete}"></div>
+    <div class="form-group"><label>Rebotes:</label><input type="number" th:field="*{rebotes}"></div>
+</div>
+
+<div id="metricas_volei" class="metric-fields"
+     th:style="${metrica.esporte == 'Vôlei' ? 'display:block;' : 'display:none;'}">
+    <div class="form-group"><label>Pontos:</label><input type="number" th:field="*{pontos_volei}"></div>
+    <div class="form-group"><label>Aces:</label><input type="number" th:field="*{aces}"></div>
+    <div class="form-group"><label>Bloqueios:</label><input type="number" th:field="*{bloqueios}"></div>
+</div>
+
+                <button type="submit" class="btn-submit-form">Salvar Alterações</button>
+            </form>
+        </div>
+    </main>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

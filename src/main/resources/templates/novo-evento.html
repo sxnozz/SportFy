@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SportFy - Novo Evento</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{fragments :: header}"></div>
+
+    <main class="container-main">
+        <div class="form-box">
+            <h2 style="color: #333; font-size: 2rem; text-align: center; margin-top: 0; margin-bottom: 2rem;">Criar Novo Evento</h2>
+            
+            <form th:action="@{/eventos/novo}" th:object="${evento}" method="post" class="event-form">
+                <div class="form-group">
+                    <label for="modalidade">Modalidade:</label>
+                    <select id="modalidade" th:field="*{modalidade_evento}" required>
+                        <option value="">Selecione um esporte...</option>
+                        <option value="Futebol">Futebol</option>
+                        <option value="Basquete">Basquete</option>
+                        <option value="Vôlei">Vôlei</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="lugar">Endereço Completo do Local:</label>
+                    <input type="text" id="lugar" th:field="*{lugar}" placeholder="Ex: Praça Central, Sapucaia do Sul, RS" required>
+                </div>
+                <div class="form-group">
+                    <label for="dataHora">Data e Hora do Evento:</label>
+                    <input type="datetime-local" id="dataHora" th:field="*{data_hora_evento}" required>
+                </div>
+                <div class="form-group">
+                    <label for="descricao">Descrição:</label>
+                    <textarea id="descricao" th:field="*{descricao}" rows="4" placeholder="Alguma informação adicional? (Ex: Levar bola, etc.)"></textarea>
+                </div>
+                <button type="submit" class="btn-submit-form">Criar Evento</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
