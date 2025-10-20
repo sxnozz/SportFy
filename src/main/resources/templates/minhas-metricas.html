@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>SportFy - Minhas Métricas</title>
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -14,7 +21,7 @@
         <h2 class="main-title">Minhas Métricas</h2>
 
         <div class="form-box">
-            <h3 style="text-align: center; margin-top: 0;">Adicionar Nova Métrica</h3>
+            <h3 class="section-title">Adicionar Nova Métrica</h3>
             <form th:action="@{/metricas/nova}" th:object="${novaMetrica}" method="post" class="event-form">
                 <div class="form-group">
                     <label for="modalidade">Modalidade:</label>
@@ -50,53 +57,57 @@
 
         <div class="history-section" style="margin-top: 40px;">
             <h3 class="main-title" style="font-size: 2rem;">Histórico de Desempenho</h3>
-            <p style="text-align: center; color: white; margin-top: -20px; margin-bottom: 20px;">Clique em um card para visualizar o gráfico</p>
+            <p style="text-align: center; margin-top: -20px; margin-bottom: 20px;">Clique em um card para visualizar o gráfico</p>
             
             <div th:if="${metricas.isEmpty()}" class="no-events-message">
                 <p>Você ainda não registrou nenhuma métrica.</p>
             </div>
             
             <div class="event-list" th:unless="${metricas.isEmpty()}">
-                <div th:each="metrica : ${metricas}" class="event-card metric-card" 
-                     th:attr="data-labels=${chartHelper.getLabelsAsJson(metrica.esporte)},
-                              data-values=${chartHelper.getValuesAsJson(metrica)}">
+                <div th:each="metrica : ${metricas}" class="metric-card" 
+                     th:data-labels="${chartHelper.getLabelsAsJson(metrica.esporte)}"
+                     th:data-values="${chartHelper.getValuesAsJson(metrica)}">
                     
                     <div class="card-header">
-                        <h4><span th:text="${metrica.esporte}"></span> - <span th:text="${#temporals.format(metrica.diaMetrica, 'dd/MM/yyyy')}"></span></h4>
+                        <h4>
+                            <span th:text="${metrica.esporte}"></span> - 
+                            <span th:text="${#temporals.format(metrica.diaMetrica, 'dd/MM/yyyy')}"></span>
+                        </h4>
                         <div class="card-actions">
                             <a th:href="@{/metricas/editar/{id}(id=${metrica.id_metrica})}" class="btn-edit">Editar</a>
-                            <form th:action="@{/metricas/excluir/{id}(id=${metrica.id_metrica})}" method="post">
+                            <form th:action="@{/metricas/excluir/{id}(id=${metrica.id_metrica})}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir?');">
                                 <button type="submit" class="btn-delete">Excluir</button>
                             </form>
                         </div>
                     </div>
-                    
+
                     <ul class="metric-details-list">
-                        <li th:if="${metrica.gols != null}"><strong>Gols:</strong> <span th:text="${metrica.gols}"></span></li>
-                        <li th:if="${metrica.assistencias_futebol != null}"><strong>Assistências:</strong> <span th:text="${metrica.assistencias_futebol}"></span></li>
-                        <li th:if="${metrica.desarmes != null}"><strong>Desarmes:</strong> <span th:text="${metrica.desarmes}"></span></li>
-                        <li th:if="${metrica.pontos_basquete != null}"><strong>Pontos:</strong> <span th:text="${metrica.pontos_basquete}"></span></li>
-                        <li th:if="${metrica.assistencias_basquete != null}"><strong>Assistências:</strong> <span th:text="${metrica.assistencias_basquete}"></span></li>
-                        <li th:if="${metrica.rebotes != null}"><strong>Rebotes:</strong> <span th:text="${metrica.rebotes}"></span></li>
-                        <li th:if="${metrica.pontos_volei != null}"><strong>Pontos:</strong> <span th:text="${metrica.pontos_volei}"></span></li>
-                        <li th:if="${metrica.aces != null}"><strong>Aces:</strong> <span th:text="${metrica.aces}"></span></li>
-                        <li th:if="${metrica.bloqueios != null}"><strong>Bloqueios:</strong> <span th:text="${metrica.bloqueios}"></span></li>
+                         <li th:if="${metrica.gols != null}"><strong>Gols:</strong> <span th:text="${metrica.gols}"></span></li>
+                         <li th:if="${metrica.assistencias_futebol != null}"><strong>Assistências:</strong> <span th:text="${metrica.assistencias_futebol}"></span></li>
+                         <li th:if="${metrica.desarmes != null}"><strong>Desarmes:</strong> <span th:text="${metrica.desarmes}"></span></li>
+                         <li th:if="${metrica.pontos_basquete != null}"><strong>Pontos:</strong> <span th:text="${metrica.pontos_basquete}"></span></li>
+                         <li th:if="${metrica.assistencias_basquete != null}"><strong>Assistências:</strong> <span th:text="${metrica.assistencias_basquete}"></span></li>
+                         <li th:if="${metrica.rebotes != null}"><strong>Rebotes:</strong> <span th:text="${metrica.rebotes}"></span></li>
+                         <li th:if="${metrica.pontos_volei != null}"><strong>Pontos:</strong> <span th:text="${metrica.pontos_volei}"></span></li>
+                         <li th:if="${metrica.aces != null}"><strong>Aces:</strong> <span th:text="${metrica.aces}"></span></li>
+                         <li th:if="${metrica.bloqueios != null}"><strong>Bloqueios:</strong> <span th:text="${metrica.bloqueios}"></span></li>
                     </ul>
                 </div>
-            </div>
+                </div>
         </div>
         
         <div class="chart-section form-box" style="margin-top: 40px; max-width: 800px;">
-            <h3 class="main-title" style="font-size: 2rem; color: #333; margin-bottom: 20px;">Visualização de Desempenho</h3>
+            <h3 class="section-title">Visualização de Desempenho</h3>
             <div class="chart-container">
                 <canvas id="radarChart"></canvas>
             </div>
-            <p id="chart-placeholder" style="text-align: center; color: #666;">
+            <p id="chart-placeholder" style="text-align: center;">
                 Nenhuma métrica selecionada. Clique em um card do seu histórico.
             </p>
         </div>
     </main>
 
     <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>

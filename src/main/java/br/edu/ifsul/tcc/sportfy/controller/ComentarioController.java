@@ -29,31 +29,34 @@ public class ComentarioController {
                                       @RequestParam("texto_comentario") String textoComentario, 
                                       HttpSession session) {
 
-        // Pega o utilizador que está autenticado na sessão
+        // A verificação do Interceptor já garante que o usuário está logado,
+        // mas mantemos por segurança caso o interceptor seja desativado.
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-
-        // Medida de segurança: se não houver utilizador autenticado, redireciona para o login
         if (usuarioLogado == null) {
             return "redirect:/login";
         }
 
-        // Procura o evento na base de dados
         Optional<Evento> eventoOpt = eventoRepository.findById(eventoId);
         if (eventoOpt.isPresent()) {
             Evento evento = eventoOpt.get();
 
-            // Cria um novo objeto Comentario
+            // --- VERIFICAÇÃO DE DATA ---
+            // Se a data do evento for anterior a agora, o evento já passou.
+            if (evento.getDataHoraEvento().isBefore(LocalDateTime.now())) {
+                // Apenas redireciona de volta para a página, sem salvar o comentário.
+                return "redirect:/evento/" + eventoId; 
+            }
+            // --- FIM DA VERIFICAÇÃO ---
+
             Comentario novoComentario = new Comentario();
             novoComentario.setTexto_comentario(textoComentario);
             novoComentario.setHorario_comentario(LocalDateTime.now());
-            novoComentario.setUsuario(usuarioLogado); // Associa o utilizador ao comentário
-            novoComentario.setEvento(evento);       // Associa o evento ao comentário
+            novoComentario.setUsuario(usuarioLogado);
+            novoComentario.setEvento(evento);
 
-            // Guarda o novo comentário na base de dados
             comentarioRepository.save(novoComentario);
         }
 
-        // Redireciona de volta para a mesma página de detalhes do evento
         return "redirect:/evento/" + eventoId;
     }
 }

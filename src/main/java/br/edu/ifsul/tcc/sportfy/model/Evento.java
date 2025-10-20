@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import org.springframework.format.annotation.DateTimeFormat; 
 
 @Entity
 @Getter // <-- Adicione esta anotação
@@ -14,17 +15,17 @@ public class Evento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_evento;
-    private String modalidade_evento;
+    private String modalidadeEvento;
     private String lugar;
     @Column(length = 355)
     private String descricao;
-    private LocalDateTime data_hora_evento;
-    private LocalDateTime horario_de_postagem;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+private LocalDateTime dataHoraEvento;  
+private LocalDateTime horario_de_postagem;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario_criador")
-    private Usuario usuario_criador;
-
+private Usuario usuarioCriador;
     @ManyToMany
     @JoinTable(
         name = "evento_participante",
@@ -33,7 +34,6 @@ public class Evento {
     )
     private Set<Usuario> participantes;
 
-    @OneToMany(mappedBy = "evento")
-    private Set<Comentario> comentarios;
-
+  @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL, orphanRemoval = true)
+private Set<Comentario> comentarios;
 }

@@ -2,28 +2,59 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <body>
 
-    <header class="main-header" th:fragment="header">
-        <div class="logo">
-            <a th:href="@{/}">SportFy</a>
-        </div>
-        <nav class="main-nav">
-            <nav class="main-nav">
-    <ul>
-        <li><a th:href="@{/}" th:classappend="${activePage == 'eventos' ? 'active' : ''}">Eventos</a></li>
-        <li><a href="#" th:classappend="${activePage == 'meusEventos' ? 'active' : ''}">Meus Eventos</a></li>
-        <li><a href="#" th:classappend="${activePage == 'eventosInscritos' ? 'active' : ''}">Eventos Inscritos</a></li>
-<li><a th:href="@{/minhas-metricas}" th:classappend="${activePage == 'minhasMetricas' ? 'active' : ''}">Minhas Métricas</a></li>
-    </ul>
-</nav>
-        </nav>
-        <div class="user-actions">
-            <a th:href="@{/eventos/novo}" class="btn-header-create">Criar Evento</a>
-            <div class="user-info" th:if="${session.usuarioLogado != null}">
-                <span th:text="${'Olá, ' + session.usuarioLogado.nome}"></span>
-                <a th:href="@{/logout}" class="logout-link">(Sair)</a>
+    <div th:fragment="header">
+        <header class="main-header">
+            
+            <div class="header-left">
+                <a th:href="@{/}" class="logo">SportFy</a>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a th:href="@{/}" th:classappend="${activePage == 'eventos' ? 'active' : ''}">Eventos</a></li>
+                        <li th:if="${session.usuarioLogado != null}"><a th:href="@{/meus-eventos}" th:classappend="${activePage == 'meusEventos' ? 'active' : ''}">Meus Eventos</a></li>
+                        <li th:if="${session.usuarioLogado != null}"><a th:href="@{/eventos-inscritos}" th:classappend="${activePage == 'eventosInscritos' ? 'active' : ''}">Eventos Inscritos</a></li>
+                        <li th:if="${session.usuarioLogado != null}"><a th:href="@{/minhas-metricas}" th:classappend="${activePage == 'minhasMetricas' ? 'active' : ''}">Minhas Métricas</a></li>
+                    </ul>
+                </nav>
             </div>
-        </div>
-    </header>
+    
+            <div class="header-right">
+                
+                <div class="theme-switch-wrapper">
+                    <label class="theme-switch" for="checkbox">
+                        <input type="checkbox" id="checkbox" />
+                        <div class="slider round"></div>
+                    </label>
+                </div>
 
+                <a th:if="${session.usuarioLogado != null}" th:href="@{/eventos/novo}" class="btn-header-create">Criar Evento</a>
+                
+                <div th:if="${session.usuarioLogado != null}" class="user-info">
+                    <div class="header-profile-pic-container">
+                        <a th:href="@{/perfil/{id}(id=${session.usuarioLogado.id_usuario})}" title="Ver meu Perfil">
+                            <img th:if="${session.usuarioLogado.fotoPerfilUrl}" 
+                                 th:src="@{/uploads/{filename}(filename=${session.usuarioLogado.fotoPerfilUrl})}" 
+                                 alt="Foto de Perfil" class="header-profile-pic">
+                            <div th:unless="${session.usuarioLogado.fotoPerfilUrl}" class="header-profile-pic-placeholder" 
+                                 th:text="${#strings.substring(session.usuarioLogado.nome, 0, 1).toUpperCase()}"></div>
+                        </a>
+                    </div>
+                    <div>
+                        <span th:text="'Olá, ' + ${session.usuarioLogado.nome}">Olá, Usuário</span>
+                        <div>
+                            <a th:href="@{/perfil/editar}" class="logout-link" style="color: #f39c12; font-size: 0.8em; margin-right: 5px;">Editar Perfil</a>
+                            <a th:href="@{/logout}" class="btn-logout">(Sair)</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div th:unless="${session.usuarioLogado != null}" style="display: flex; gap: 10px;">
+                    <a th:href="@{/login}" class="btn-header-create" style="background-color: #6c757d;">Login</a>
+                    <a th:href="@{/cadastro}" class="btn-edit" style="padding: 10px 20px;">Cadastrar</a>
+                </div>
+            </div>
+    
+        </header>
+    </div>
+    
 </body>
 </html>

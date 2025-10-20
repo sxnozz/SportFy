@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SportFy - Editar Perfil</title>
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{fragments :: header}"></div>
+    <main class="container-main">
+        <div class="form-box">
+            <h2>Editar Perfil</h2>
+            <form th:action="@{/perfil/editar}" th:object="${usuario}" method="post" enctype="multipart/form-data" class="event-form">
+
+                <div class="form-group">
+                    <label for="bio">Sua Bio:</label>
+                    <textarea id="bio" th:field="*{bio}" rows="4" placeholder="Fale um pouco sobre você..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="fotoFile">Foto de Perfil:</label>
+                    <input type="file" id="fotoFile" name="fotoFile" accept="image/png, image/jpeg">
+                    <small>Envie uma nova imagem para alterar sua foto atual.</small>
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="perfilPrivado" th:field="*{perfilPrivado}" style="width: auto;">
+                    <label for="perfilPrivado" style="margin-bottom: 0;">Tornar meu perfil privado</label>
+                </div>
+
+                <button type="submit" class="btn-submit-form">Salvar Alterações</button>
+            </form>
+        </div>
+    </main>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

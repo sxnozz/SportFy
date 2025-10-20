@@ -3,6 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>SportFy - Editar Métrica</title>
+    <script>
+    (function() {
+        // Verifica a preferência salva no localStorage
+        if (localStorage.getItem('theme') === 'dark-mode') {
+            // Aplica a classe diretamente na tag <html> ANTES da página ser desenhada
+            document.documentElement.classList.add('dark-mode');
+        }
+    })();
+</script>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
@@ -53,5 +62,7 @@
     </main>
 
     <script th:src="@{/js/main.js}"></script>
+        <script th:src="@{/js/theme.js}"></script>
+
 </body>
 </html>

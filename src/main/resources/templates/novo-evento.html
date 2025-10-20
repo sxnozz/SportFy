@@ -3,6 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>SportFy - Novo Evento</title>
+    <script>
+        (function() {
+            // Verifica a preferência salva no localStorage
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                // Aplica a classe diretamente na tag <html> ANTES da página ser desenhada
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
@@ -10,12 +19,12 @@
 
     <main class="container-main">
         <div class="form-box">
-            <h2 style="color: #333; font-size: 2rem; text-align: center; margin-top: 0; margin-bottom: 2rem;">Criar Novo Evento</h2>
+            <h2 class="section-title" style="text-align: center; margin-top: 0;">Criar Novo Evento</h2>
             
             <form th:action="@{/eventos/novo}" th:object="${evento}" method="post" class="event-form">
                 <div class="form-group">
                     <label for="modalidade">Modalidade:</label>
-                    <select id="modalidade" th:field="*{modalidade_evento}" required>
+                    <select id="modalidade" th:field="*{modalidadeEvento}" required>
                         <option value="">Selecione um esporte...</option>
                         <option value="Futebol">Futebol</option>
                         <option value="Basquete">Basquete</option>
@@ -28,7 +37,7 @@
                 </div>
                 <div class="form-group">
                     <label for="dataHora">Data e Hora do Evento:</label>
-                    <input type="datetime-local" id="dataHora" th:field="*{data_hora_evento}" required>
+                    <input type="datetime-local" id="dataHora" th:field="*{dataHoraEvento}" required>
                 </div>
                 <div class="form-group">
                     <label for="descricao">Descrição:</label>
@@ -38,5 +47,7 @@
             </form>
         </div>
     </main>
+    
+    <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>

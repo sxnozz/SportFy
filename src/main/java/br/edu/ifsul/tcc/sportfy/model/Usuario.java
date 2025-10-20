@@ -1,16 +1,20 @@
+// Em br.edu.ifsul.tcc.sportfy.model.Usuario.java
+
 package br.edu.ifsul.tcc.sportfy.model;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
-
-// Adicione os imports do Lombok aqui
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Getter // <-- Adicione esta anotação
-@Setter // <-- Adicione esta anotação
+@Getter
+@Setter
+@EqualsAndHashCode(of = "id_usuario")
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_usuario;
@@ -22,14 +26,21 @@ public class Usuario {
     
     private String senha;
     
-    @Lob
-    private byte[] foto_usuario;
+    // --- NOVOS CAMPOS ---
+    
+    @Column(length = 255) // Limita o tamanho da bio
+    private String bio;
+    
+    private String fotoPerfilUrl; // Armazena o nome do arquivo da foto (ex: "meu-avatar.jpg")
+    
+    private boolean perfilPrivado = false; // Por padrão, o perfil é público
+    
+    // --- RELACIONAMENTOS (JÁ EXISTENTES) ---
 
-    @OneToMany(mappedBy = "usuario_criador")
-    private Set<Evento> eventosCriados;
+    @OneToMany(mappedBy = "usuarioCriador")
+    private Set<Evento> eventosCriados = new HashSet<>();
 
     @ManyToMany(mappedBy = "participantes")
-    private Set<Evento> eventosInscritos;
+    private Set<Evento> eventosInscritos = new HashSet<>();
     
-    // Agora você pode apagar todos os getters e setters manuais que tínhamos criado antes!
 }
