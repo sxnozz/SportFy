@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SportFy - Home</title>
+    <script>
+    (function() {
+        // Verifica a preferência salva no localStorage
+        if (localStorage.getItem('theme') === 'dark-mode') {
+            // Aplica a classe diretamente na tag <html> ANTES da página ser desenhada
+            document.documentElement.classList.add('dark-mode');
+        }
+    })();
+</script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+</head>
+<body>
+    <div th:replace="~{fragments :: header}"></div>
+
+    <main class="home-container">
+
+
+        <aside class="filters-sidebar">
+            <h3>Filtros</h3>
+            <form th:action="@{/}" method="get" id="filter-form">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="modalidade" style="font-weight: normal;">Modalidade:</label>
+                    <select id="modalidade" name="modalidade" onchange="this.form.submit()" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        <option value="" th:selected="${selectedModalidade == null or selectedModalidade.isEmpty()}">Todas</option>
+                        <option value="Futebol" th:selected="${selectedModalidade == 'Futebol'}">Futebol</option>
+                        <option value="Basquete" th:selected="${selectedModalidade == 'Basquete'}">Basquete</option>
+                        <option value="Vôlei" th:selected="${selectedModalidade == 'Vôlei'}">Vôlei</option>
+                    </select>
+                </div>
+            </form>
+        </aside>
+
+        <section class="events-section">
+            <h2 class="main-title">Próximos Eventos</h2>
+
+            <div th:if="${eventos.isEmpty()}" class="no-events-message">
+                <p>Nenhum evento encontrado para este filtro.</p>
+            </div>
+
+            <div th:unless="${eventos.isEmpty()}" class="event-list">
+                <div th:each="evento : ${eventos}" class="event-card">
+                    <h3 th:text="${evento.modalidadeEvento}">Modalidade do Evento</h3>
+                    <p><strong>Local:</strong> <span th:text="${evento.lugar}"></span></p>
+                    <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.dataHoraEvento, 'dd/MM/yyyy HH:mm')}"></span></p>
+                    <p><strong>Criador:</strong> <span th:text="${evento.usuarioCriador.nome}"></span></p>
+                    <a th:href="@{/evento/{id}(id=${evento.id_evento})}" class="btn-ver-mais">Ver mais</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+        <script th:src="@{/js/theme.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SportFy - Login</title>
+    <script>
+    (function() {
+        // Verifica a preferência salva no localStorage
+        if (localStorage.getItem('theme') === 'dark-mode') {
+            // Aplica a classe diretamente na tag <html> ANTES da página ser desenhada
+            document.documentElement.classList.add('dark-mode');
+        }
+    })();
+</script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+    <div class="container">
+        <h1 class="auth-title">SportFy</h1>
+
+        <div th:if="${param.error}" class="alert alert-error">
+            <strong>Erro:</strong> E-mail ou senha inválidos.
+            <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success">
+             Você saiu com sucesso.
+        </div>
+         <div th:if="${param.cadastroSucesso}" class="alert alert-success">
+            Cadastro realizado com sucesso! Faça o login.
+        </div>
+        
+        <div class="form-box">
+            <h2>Login</h2>
+            <form th:action="@{/login}" method="post">
+                <input type="email" name="email" placeholder="Insira seu email" required>
+                <input type="password" name="senha" placeholder="Insira sua senha" required>
+                <button type="submit">Entrar</button>
+            </form>
+           <p class="link">
+             Não tem uma conta? 
+    <a th:href="@{/cadastro}">
+        <span>Clique aqui</span>
+    </a>
+</p>
+        </div>
+    </div>
+        <script th:src="@{/js/theme.js}"></script>
+
+</body>
+</html>
