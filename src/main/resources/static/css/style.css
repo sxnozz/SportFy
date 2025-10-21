@@ -111,8 +111,12 @@ a {
     display: block;
     color: var(--cor-texto-secundario);
 }
+<<<<<<< HEAD
 
 .auth-page .link a {
+=======
+.auth-page .link span {
+>>>>>>> 6449ce6e35213ab747427b69165ed8889bde1d81
     color: var(--cor-link);
     font-weight: bold;
     text-decoration: underline;
@@ -389,6 +393,7 @@ input:checked + .slider:before {
     border-radius: 50%; 
 }
 
+<<<<<<< HEAD
 /* =================================== */
 /* AÇÕES DE USUÁRIO NO HEADER (v2)    */
 /* =================================== */
@@ -508,6 +513,8 @@ html.dark-mode .user-action-btn.btn-logout {
 .alert .close-btn:hover {
     opacity: 0.8; /* Fica mais forte ao passar o mouse */
 }
+=======
+>>>>>>> 6449ce6e35213ab747427b69165ed8889bde1d81
 
 
 
