@@ -29,7 +29,6 @@
                 <a th:if="${session.usuarioLogado != null}" th:href="@{/eventos/novo}" class="btn-header-create">Criar Evento</a>
                 
                 <div th:if="${session.usuarioLogado != null}" class="user-info">
-<<<<<<< HEAD
     <div class="header-profile-pic-container">
         <a th:href="@{/perfil/{id}(id=${session.usuarioLogado.id_usuario})}" title="Ver meu Perfil">
             <img th:if="${session.usuarioLogado.fotoPerfilUrl}" 
@@ -54,25 +53,6 @@
         </div>
     </div>
 </div>
-=======
-                    <div class="header-profile-pic-container">
-                        <a th:href="@{/perfil/{id}(id=${session.usuarioLogado.id_usuario})}" title="Ver meu Perfil">
-                            <img th:if="${session.usuarioLogado.fotoPerfilUrl}" 
-                                 th:src="@{/uploads/{filename}(filename=${session.usuarioLogado.fotoPerfilUrl})}" 
-                                 alt="Foto de Perfil" class="header-profile-pic">
-                            <div th:unless="${session.usuarioLogado.fotoPerfilUrl}" class="header-profile-pic-placeholder" 
-                                 th:text="${#strings.substring(session.usuarioLogado.nome, 0, 1).toUpperCase()}"></div>
-                        </a>
-                    </div>
-                    <div>
-                        <span th:text="'Olá, ' + ${session.usuarioLogado.nome}">Olá, Usuário</span>
-                        <div>
-                            <a th:href="@{/perfil/editar}" class="logout-link" style="color: #f39c12; font-size: 0.8em; margin-right: 5px;">Editar Perfil</a>
-                            <a th:href="@{/logout}" class="btn-logout">(Sair)</a>
-                        </div>
-                    </div>
-                </div>
->>>>>>> 6449ce6e35213ab747427b69165ed8889bde1d81
     
                 <div th:unless="${session.usuarioLogado != null}" style="display: flex; gap: 10px;">
                     <a th:href="@{/login}" class="btn-header-create" style="background-color: #6c757d;">Login</a>

@@ -26,10 +26,24 @@
 
                 <div class="form-group">
                     <label for="fotoFile">Foto de Perfil:</label>
-                    <input type="file" id="fotoFile" name="fotoFile" accept="image/png, image/jpeg">
+                    
+                    <input type="file" id="fotoFile" name="fotoFile" accept="image/png, image/jpeg" class="input-file-hidden">
+                    
+                    <div class="input-file-group">
+                        <label for="fotoFile" class="input-file-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            Escolher arquivo
+                        </label>
+                        <span id="file-name-display" class="file-name">Nenhum arquivo escolhido</span>
+                    </div>
+
                     <small>Envie uma nova imagem para alterar sua foto atual.</small>
                 </div>
 
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: -10px; margin-bottom: 10px;">
+                    <input type="checkbox" id="removerFoto" name="removerFoto" style="width: auto;">
+                    <label for="removerFoto" style="margin-bottom: 0; font-weight: normal;">Remover foto de perfil atual</label>
+                </div>
                 <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
                     <input type="checkbox" id="perfilPrivado" th:field="*{perfilPrivado}" style="width: auto;">
                     <label for="perfilPrivado" style="margin-bottom: 0;">Tornar meu perfil privado</label>
@@ -40,5 +54,46 @@
         </div>
     </main>
     <script th:src="@{/js/theme.js}"></script>
-</body>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fotoFile');
+            const fileDisplay = document.getElementById('file-name-display');
+            // Seleciona o "botão" (label) para podermos desabilitá-lo
+            const fileLabel = document.querySelector('label[for="fotoFile"]');
+            // Seleciona o novo checkbox
+            const removeFotoCheck = document.getElementById('removerFoto');
+
+            // Script antigo para mostrar o nome do arquivo
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files.length > 0) {
+                        fileDisplay.textContent = this.files[0].name;
+                    } else {
+                        fileDisplay.textContent = 'Nenhum arquivo escolhido';
+                    }
+                });
+            }
+
+            // Nova lógica para o checkbox "Remover foto"
+            if (removeFotoCheck) {
+                removeFotoCheck.addEventListener('change', function() {
+                    if (this.checked) {
+                        // Se marcado, desabilita o input e o botão
+                        fileInput.disabled = true;
+                        fileLabel.classList.add('disabled'); // Adiciona classe para o CSS estilizar
+                        
+                        // Limpa qualquer seleção de arquivo que o usuário já tenha feito
+                        fileInput.value = ''; 
+                        fileDisplay.textContent = 'Nenhum arquivo escolhido';
+                    } else {
+                        // Se desmarcado, reabilita tudo
+                        fileInput.disabled = false;
+                        fileLabel.classList.remove('disabled');
+                    }
+                });
+            }
+        });
+    </script>
+    </body>
 </html>

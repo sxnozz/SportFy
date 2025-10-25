@@ -160,38 +160,49 @@ public String exibirPerfilUsuario(@PathVariable Long id, Model model, HttpSessio
     }
 
     // 2. MÉTODO POST: SALVA AS ALTERAÇÕES DO PERFIL
-    @PostMapping("/perfil/editar")
-    public String processarEdicaoPerfil(@ModelAttribute Usuario usuarioForm, 
-                                        @RequestParam("fotoFile") MultipartFile fotoFile,
-                                        HttpSession session) {
-        
-        Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-        if (usuarioLogado == null) {
-            return "redirect:/login";
-        }
+ // Em br.edu.ifsul.tcc.sportfy.controller.UsuarioController.java
 
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioLogado.getId_usuario());
-        if (usuarioOpt.isPresent()) {
-            Usuario usuarioParaSalvar = usuarioOpt.get();
-            
-            // Atualiza a bio e a preferência de privacidade
-            usuarioParaSalvar.setBio(usuarioForm.getBio());
-            usuarioParaSalvar.setPerfilPrivado(usuarioForm.isPerfilPrivado());
-
-            // Se um novo arquivo de foto foi enviado...
-            if (!fotoFile.isEmpty()) {
-                // ...salva o arquivo e obtém o nome gerado
-                String nomeArquivo = fileStorageService.store(fotoFile);
-                // ...atualiza o campo no usuário
-                usuarioParaSalvar.setFotoPerfilUrl(nomeArquivo);
-            }
-
-            usuarioRepository.save(usuarioParaSalvar);
-            // Atualiza o objeto na sessão para refletir as mudanças imediatamente no header
-            session.setAttribute("usuarioLogado", usuarioParaSalvar);
-        }
-
-        // Redireciona de volta para a página de perfil
-        return "redirect:/perfil/" + usuarioLogado.getId_usuario();
+@PostMapping("/perfil/editar")
+public String processarEdicaoPerfil(@ModelAttribute Usuario usuarioForm, 
+                                    
+                                    // ### MUDANÇA 1: Adicionar "required = false" ###
+                                    @RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
+                                    
+                                    @RequestParam(value = "removerFoto", required = false) boolean removerFoto,
+                                    HttpSession session) {
+    
+    Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
+    if (usuarioLogado == null) {
+        return "redirect:/login";
     }
+
+    Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioLogado.getId_usuario());
+    if (usuarioOpt.isPresent()) {
+        Usuario usuarioParaSalvar = usuarioOpt.get();
+        
+        usuarioParaSalvar.setBio(usuarioForm.getBio());
+        usuarioParaSalvar.setPerfilPrivado(usuarioForm.isPerfilPrivado());
+
+        // --- ### MUDANÇA 2: Lógica de foto à prova de NullPointerException ### ---
+        if (removerFoto) {
+            // 1. Se "removerFoto" estiver marcado, remove a foto.
+            usuarioParaSalvar.setFotoPerfilUrl(null);
+        
+        // 2. VERIFICA SE fotoFile NÃO É NULO *ANTES* de checar se está vazio.
+        } else if (fotoFile != null && !fotoFile.isEmpty()) { 
+            // 3. Se não for remover e um novo arquivo foi enviado, salva o novo.
+            String nomeArquivo = fileStorageService.store(fotoFile);
+            usuarioParaSalvar.setFotoPerfilUrl(nomeArquivo);
+        }
+        // 4. Se nenhuma das condições acima for atendida (usuário não quer remover e 
+        //    não enviou novo arquivo), a foto atual é simplesmente mantida.
+        // --- FIM DA LÓGICA DE FOTO ---
+
+        usuarioRepository.save(usuarioParaSalvar);
+        // Atualiza a sessão para refletir as mudanças imediatamente
+        session.setAttribute("usuarioLogado", usuarioParaSalvar);
+    }
+
+    return "redirect:/perfil/" + usuarioLogado.getId_usuario();
+}
 }

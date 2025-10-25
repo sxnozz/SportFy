@@ -18,7 +18,6 @@
     <div class="container">
         <h1 class="auth-title">SportFy</h1>
 
-<<<<<<< HEAD
         <div th:if="${param.erroSenha}" class="alert alert-error">
             <strong>Erro:</strong> As senhas não coincidem.
             <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -28,17 +27,6 @@
             <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
         </div>
         <div th:if="${param.erroNome}" class="alert alert-error">
-=======
-        <div th:if="${param.erroSenha}" class="alert-error">
-            <strong>Erro:</strong> As senhas não coincidem.
-            <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
-        </div>
-        <div th:if="${param.erroEmail}" class="alert-error">
-            <strong>Erro:</strong> Este e-mail já está cadastrado.
-            <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
-        </div>
-        <div th:if="${param.erroNome}" class="alert-error">
->>>>>>> 6449ce6e35213ab747427b69165ed8889bde1d81
             <strong>Erro:</strong> Este nome de usuário já está em uso.
             <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
         </div>
@@ -52,18 +40,12 @@
                 <input type="password" name="confirmeSenha" placeholder="Confirme sua senha" required>
                 <button type="submit">Cadastrar</button>
             </form>
-<<<<<<< HEAD
            <p class="link">
     Já tem uma conta? 
     <a th:href="@{/login}">
         <span>Clique aqui</span>
     </a>
 </p>
-=======
-            <a th:href="@{/login}" class="link">
-                Já tem uma conta? <span>Clique aqui</span>
-            </a>
->>>>>>> 6449ce6e35213ab747427b69165ed8889bde1d81
         </div>
     </div>
         <script th:src="@{/js/theme.js}"></script>

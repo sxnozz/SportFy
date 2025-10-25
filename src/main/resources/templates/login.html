@@ -18,26 +18,18 @@
     <div class="container">
         <h1 class="auth-title">SportFy</h1>
 
-<<<<<<< HEAD
         <div th:if="${param.error}" class="alert alert-error">
             <strong>Erro:</strong> E-mail ou senha inválidos.
             <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
         </div>
         <div th:if="${param.logout}" class="alert alert-success">
-             Você saiu com sucesso.
-        </div>
+    Você saiu com sucesso.
+    <span class="close-btn" onclick="this.parentElement.style.display='none';">×</span>
+</div>
          <div th:if="${param.cadastroSucesso}" class="alert alert-success">
-=======
-        <div th:if="${param.error}" class="alert-error">
-            <strong>Erro:</strong> E-mail ou senha inválidos.
-            <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
-        </div>
-        <div th:if="${param.logout}" class="alert-success">
-             Você saiu com sucesso.
-        </div>
-         <div th:if="${param.cadastroSucesso}" class="alert-success">
->>>>>>> 6449ce6e35213ab747427b69165ed8889bde1d81
             Cadastro realizado com sucesso! Faça o login.
+        <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+
         </div>
         
         <div class="form-box">
@@ -47,18 +39,12 @@
                 <input type="password" name="senha" placeholder="Insira sua senha" required>
                 <button type="submit">Entrar</button>
             </form>
-<<<<<<< HEAD
            <p class="link">
              Não tem uma conta? 
     <a th:href="@{/cadastro}">
         <span>Clique aqui</span>
     </a>
 </p>
-=======
-            <a th:href="@{/cadastro}" class="link">
-                Não tem uma conta? <span>Clique aqui</span>
-            </a>
->>>>>>> 6449ce6e35213ab747427b69165ed8889bde1d81
         </div>
     </div>
         <script th:src="@{/js/theme.js}"></script>

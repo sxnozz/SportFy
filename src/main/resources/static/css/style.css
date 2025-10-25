@@ -111,12 +111,8 @@ a {
     display: block;
     color: var(--cor-texto-secundario);
 }
-<<<<<<< HEAD
 
 .auth-page .link a {
-=======
-.auth-page .link span {
->>>>>>> 6449ce6e35213ab747427b69165ed8889bde1d81
     color: var(--cor-link);
     font-weight: bold;
     text-decoration: underline;
@@ -393,7 +389,6 @@ input:checked + .slider:before {
     border-radius: 50%; 
 }
 
-<<<<<<< HEAD
 /* =================================== */
 /* AÇÕES DE USUÁRIO NO HEADER (v2)    */
 /* =================================== */
@@ -513,8 +508,116 @@ html.dark-mode .user-action-btn.btn-logout {
 .alert .close-btn:hover {
     opacity: 0.8; /* Fica mais forte ao passar o mouse */
 }
-=======
->>>>>>> 6449ce6e35213ab747427b69165ed8889bde1d81
+
+
+/* =================================== */
+/* INPUT DE ARQUIVO PERSONALIZADO (v2) */
+/* =================================== */
+
+/* 1. Esconde o input de arquivo real (Sem mudanças) */
+.input-file-hidden {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+/* 2. O container (Sem mudanças) */
+.input-file-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* 3. O "botão" (label) - ESTILO PADRÃO (TEMA CLARO) */
+.input-file-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background-color: #fff; /* Fundo branco */
+    color: var(--cor-link); /* Texto azul */
+    border: 1px solid var(--cor-link); /* Borda azul */
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+/* 3a. Ícone (TEMA CLARO) */
+.input-file-label svg {
+    stroke: var(--cor-link);
+    transition: stroke 0.2s ease;
+}
+
+/* 3b. Hover (TEMA CLARO) */
+.input-file-label:hover {
+    background-color: var(--cor-link);
+    color: white;
+}
+.input-file-label:hover svg {
+    stroke: white;
+}
+
+/* 4. O texto "Nenhum arquivo escolhido" (Sem mudanças) */
+.file-name {
+    color: var(--cor-texto-secundario);
+    font-style: italic;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+/* 5. ESTILOS DO MODO ESCURO */
+html.dark-mode .input-file-label {
+    background-color: rgba(99, 179, 237, 0.2); /* Fundo azul transparente */
+    border-color: rgba(99, 179, 237, 0.4);
+    color: #63b3ed; /* Texto azul claro */
+}
+
+html.dark-mode .input-file-label svg {
+    stroke: #63b3ed;
+}
+
+html.dark-mode .input-file-label:hover {
+    background-color: #63b3ed;
+    border-color: #63b3ed;
+    color: #1a202c; /* Texto escuro no hover */
+}
+
+html.dark-mode .input-file-label:hover svg {
+    stroke: #1a202c;
+}
+
+/* 6. (NOVO) Estilo para o botão quando desabilitado */
+.input-file-label.disabled {
+    background-color: #e9ecef; /* Fundo cinza */
+    border-color: #ced4da;
+    color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+.input-file-label.disabled svg {
+    stroke: #6c757d;
+}
+
+html.dark-mode .input-file-label.disabled {
+    background-color: #4a5568;
+    border-color: #6c757d;
+    color: #adb5bd;
+}
+html.dark-mode .input-file-label.disabled svg {
+    stroke: #adb5bd;
+}
 
 
 

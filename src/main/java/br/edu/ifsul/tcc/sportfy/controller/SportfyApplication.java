@@ -20,4 +20,4 @@ public class SportfyApplication {
 }
 
 
-//teste do commit
+//versao final 
