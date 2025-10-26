@@ -1,8 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    
     <title th:text="'SportFy - ' + ${evento.modalidadeEvento}">Detalhes do Evento</title>
+    
     <script>
         (function() {
             if (localStorage.getItem('theme') === 'dark-mode') {
@@ -10,12 +13,15 @@
             }
         })();
     </script>
+    
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+    
     <div th:replace="~{fragments :: header}"></div>
 
     <main class="container-main">
+        
         <div th:if="${evento}" class="event-details-container">
             
             <h2 class="main-title" th:text="${evento.modalidadeEvento}"></h2>
@@ -34,12 +40,14 @@
             </div>
 
             <div class="actions-section" th:if="${evento.dataHoraEvento.isAfter(#temporals.createNow())}">
+                
                 <div th:if="${session.usuarioLogado != null and session.usuarioLogado.id_usuario == evento.usuarioCriador.id_usuario}">
                     <div class="card-actions">
                         <a th:href="@{/eventos/editar/{id}(id=${evento.id_evento})}" class="btn-edit">Editar</a>
                         <form th:action="@{/eventos/excluir/{id}(id=${evento.id_evento})}" method="post"><button type="submit" class="btn-delete">Excluir</button></form>
                     </div>
                 </div>
+                
                 <div th:if="${session.usuarioLogado != null and session.usuarioLogado.id_usuario != evento.usuarioCriador.id_usuario}">
                     <div th:if="${#sets.contains(evento.participantes, session.usuarioLogado)}">
                         <form th:action="@{/evento/{id}/cancelar-inscricao(id=${evento.id_evento})}" method="post"><button type="submit" class="btn-delete">Cancelar Inscrição</button></form>
@@ -64,7 +72,7 @@
                     <p>Não houve participantes neste evento.</p>
                 </div>
 
-                <ul th:unless="${evento.participantes.isEmpty()}" style="list-style: none; padding: 0;">
+                <ul th:unless="${evento.participantes.isEmpty()}" class="list-unstyled">
                     <li th:each="participante : ${evento.participantes}" class="user-list-item">
                         <a th:href="@{/perfil/{id}(id=${participante.id_usuario})}">
                             <img th:if="${participante.fotoPerfilUrl}" th:src="@{/uploads/{filename}(filename=${participante.fotoPerfilUrl})}" th:alt="'Foto de perfil de ' + ${participante.nome}" class="list-profile-pic">
@@ -77,15 +85,19 @@
 
             <div class="comments-section">
                 <h3>Comentários</h3>
+                
                 <form th:action="@{/evento/{id}/comentar(id=${evento.id_evento})}" method="post" class="comment-form" th:if="${evento.dataHoraEvento.isAfter(#temporals.createNow())}">
                     <div class="comment-input-group">
                         <textarea name="texto_comentario" placeholder="Adicione um comentário..." required></textarea>
                         <button type="submit">Enviar</button>
                     </div>
                 </form>
-                <hr style="margin: 30px 0;">
+                
+                <hr class="section-divider">
+                
                 <div class="comment-list">
                     <div th:if="${evento.comentarios.isEmpty()}"><p>Ainda não há comentários.</p></div>
+                    
                     <div th:unless="${evento.comentarios.isEmpty()}" th:each="comentario : ${evento.comentarios}" class="comment-item user-list-item">
                         <a th:href="@{/perfil/{id}(id=${comentario.usuario.id_usuario})}">
                             <img th:if="${comentario.usuario.fotoPerfilUrl}" th:src="@{/uploads/{filename}(filename=${comentario.usuario.fotoPerfilUrl})}" th:alt="'Foto de perfil de ' + ${comentario.usuario.nome}" class="list-profile-pic">
@@ -95,7 +107,7 @@
                             <p>
                                 <strong><a th:href="@{/perfil/{id}(id=${comentario.usuario.id_usuario})}" th:text="${comentario.usuario.nome}"></a></strong>
                                 <span class="comment-date" th:text="' - ' + ${#temporals.format(comentario.horario_comentario, 'dd/MM/yyyy HH:mm')}"></span>
-                            </p>
+                            </D>
                             <p th:text="${comentario.texto_comentario}"></p>
                         </div>
                     </div>
@@ -104,6 +116,7 @@
 
         </div>
     </main>
+    
     <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>

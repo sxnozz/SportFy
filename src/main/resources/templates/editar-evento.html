@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <title>SportFy - Editar Evento</title>
     <script>
-    (function() {
-        // Verifica a preferência salva no localStorage
-        if (localStorage.getItem('theme') === 'dark-mode') {
-            // Aplica a classe diretamente na tag <html> ANTES da página ser desenhada
-            document.documentElement.classList.add('dark-mode');
-        }
-    })();
-</script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
@@ -19,7 +17,8 @@
 
     <main class="container-main">
         <div class="form-box">
-            <h2 style="color: #333; font-size: 2rem; text-align: center; margin-top: 0; margin-bottom: 2rem;">Editar Evento</h2>
+            
+            <h2 class="form-title">Editar Evento</h2>
 
             <form th:action="@{/eventos/editar/{id}(id=${evento.id_evento})}" th:object="${evento}" method="post" class="event-form">
 

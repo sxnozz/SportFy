@@ -23,13 +23,17 @@ import java.util.stream.Collectors;
 @Controller
 public class EventoController {
 
+    // Repositório para operações CRUD com eventos.
     @Autowired
     private EventoRepository eventoRepository;
 
+    // Repositório para operações com usuários.
     @Autowired
     private UsuarioRepository usuarioRepository;
 
     // --- PÁGINA PRINCIPAL ---
+    // Exibe a página inicial (home) com lista de eventos.
+    // Se 'modalidade' for fornecida, filtra por modalidade.
     @GetMapping("/")
     public String exibirPaginaPrincipal(@RequestParam(name = "modalidade", required = false) String modalidade, Model model) {
         List<Evento> eventos;
@@ -45,6 +49,7 @@ public class EventoController {
     }
 
     // --- MÉTODOS PARA CRIAÇÃO DE EVENTO ---
+    // Mostra formulário para criar novo evento (modelo Evento vazio no model).
     @GetMapping("/eventos/novo")
     public String exibirFormularioNovoEvento(Model model) {
         model.addAttribute("evento", new Evento());
@@ -52,6 +57,8 @@ public class EventoController {
         return "novo-evento";
     }
 
+    // Processa POST do formulário de novo evento.
+    // Define o criador como usuário logado e grava horário de postagem.
     @PostMapping("/eventos/novo")
     public String processarNovoEvento(@ModelAttribute Evento evento, HttpSession session) {
         // A verificação de data não é necessária aqui, pois é um novo evento.
@@ -66,17 +73,19 @@ public class EventoController {
         return "redirect:/";
     }
 
+    // Inscreve o usuário logado como participante do evento.
+    // Bloqueia inscrição se o evento já passou.
     @PostMapping("/evento/{id}/participar")
     public String participarDoEvento(@PathVariable Long id, HttpSession session) {
         Optional<Evento> eventoOpt = eventoRepository.findById(id);
         if (eventoOpt.isPresent()) {
             Evento evento = eventoOpt.get();
-            
+
             // VERIFICAÇÃO DE DATA
             if (evento.getDataHoraEvento().isBefore(LocalDateTime.now())) {
                 return "redirect:/evento/" + id; // Apenas redireciona de volta
             }
-            
+
             Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
             evento.getParticipantes().add(usuarioLogado);
             eventoRepository.save(evento);
@@ -84,10 +93,12 @@ public class EventoController {
         return "redirect:/evento/" + id;
     }
 
+    // Exibe a página de detalhes do evento.
+    // 'from' permite controlar qual menu/página estava ativa ao navegar.
     @GetMapping("/evento/{id}")
     public String exibirDetalhesDoEvento(@PathVariable Long id,
-                                       @RequestParam(name = "from", required = false, defaultValue = "eventos") String fromPage,
-                                       Model model) {
+                                         @RequestParam(name = "from", required = false, defaultValue = "eventos") String fromPage,
+                                         Model model) {
         Optional<Evento> eventoOpt = eventoRepository.findById(id);
         if (eventoOpt.isPresent()) {
             model.addAttribute("evento", eventoOpt.get());
@@ -98,6 +109,7 @@ public class EventoController {
         }
     }
 
+    // Mostra os eventos criados pelo usuário logado.
     @GetMapping("/meus-eventos")
     public String exibirMeusEventos(Model model, HttpSession session) {
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
@@ -107,13 +119,14 @@ public class EventoController {
         return "meus-eventos";
     }
 
+    // Exclui um evento (somente se o evento ainda não passou e o usuário for o criador).
     @PostMapping("/eventos/excluir/{id}")
     public String excluirEvento(@PathVariable Long id, HttpSession session) {
         Optional<Evento> eventoOpt = eventoRepository.findById(id);
         if (eventoOpt.isPresent()) {
             Evento evento = eventoOpt.get();
             Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-            
+
             // VERIFICAÇÃO DE DATA
             if (evento.getDataHoraEvento().isBefore(LocalDateTime.now())) {
                 return "redirect:/meus-eventos"; // Impede exclusão de evento passado
@@ -126,18 +139,19 @@ public class EventoController {
         return "redirect:/meus-eventos";
     }
 
+    // Exibe formulário de edição para um evento (somente se o evento não passou e o usuário for o criador).
     @GetMapping("/eventos/editar/{id}")
     public String exibirFormularioEdicao(@PathVariable Long id, Model model, HttpSession session) {
         Optional<Evento> eventoOpt = eventoRepository.findById(id);
         if (eventoOpt.isPresent()) {
             Evento evento = eventoOpt.get();
             Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-            
+
             // VERIFICAÇÃO DE DATA E PROPRIEDADE
             if (evento.getDataHoraEvento().isBefore(LocalDateTime.now()) || !evento.getUsuarioCriador().getId_usuario().equals(usuarioLogado.getId_usuario())) {
                 return "redirect:/evento/" + id; // Não pode editar se o evento passou ou não é o dono
             }
-            
+
             model.addAttribute("evento", evento);
             model.addAttribute("activePage", "meusEventos");
             return "editar-evento";
@@ -145,6 +159,7 @@ public class EventoController {
         return "redirect:/";
     }
 
+    // Processa envio do formulário de edição e atualiza os campos permitidos do evento.
     @PostMapping("/eventos/editar/{id}")
     public String processarEdicaoEvento(@PathVariable Long id, @ModelAttribute Evento eventoAtualizado, HttpSession session) {
         Optional<Evento> eventoOpt = eventoRepository.findById(id);
@@ -154,7 +169,7 @@ public class EventoController {
 
             // VERIFICAÇÃO DE DATA E PROPRIEDADE
             if (eventoOriginal.getDataHoraEvento().isBefore(LocalDateTime.now()) || !eventoOriginal.getUsuarioCriador().getId_usuario().equals(usuarioLogado.getId_usuario())) {
-                 return "redirect:/evento/" + id;
+                return "redirect:/evento/" + id;
             }
 
             eventoOriginal.setModalidadeEvento(eventoAtualizado.getModalidadeEvento());
@@ -167,6 +182,7 @@ public class EventoController {
         return "redirect:/";
     }
 
+    // Exibe os eventos em que o usuário está inscrito, excluindo aqueles que ele mesmo criou.
     @GetMapping("/eventos-inscritos")
     public String exibirEventosInscritos(Model model, HttpSession session) {
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
@@ -182,17 +198,18 @@ public class EventoController {
         return "eventos-inscritos";
     }
 
+    // Remove a inscrição do usuário do evento (se o evento não tiver passado).
     @PostMapping("/evento/{id}/cancelar-inscricao")
     public String cancelarInscricao(@PathVariable Long id, HttpSession session) {
         Optional<Evento> eventoOpt = eventoRepository.findById(id);
         if (eventoOpt.isPresent()) {
             Evento evento = eventoOpt.get();
-            
+
             // VERIFICAÇÃO DE DATA
             if (evento.getDataHoraEvento().isBefore(LocalDateTime.now())) {
                 return "redirect:/evento/" + id;
             }
-            
+
             Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
             evento.getParticipantes().remove(usuarioLogado);
             eventoRepository.save(evento);

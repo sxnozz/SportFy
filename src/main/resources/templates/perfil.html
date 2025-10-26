@@ -2,7 +2,9 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    
     <title th:text="'Perfil de ' + ${perfil.nome}">Perfil de Usuário</title>
+    
     <script>
         (function() {
             if (localStorage.getItem('theme') === 'dark-mode') {
@@ -10,23 +12,26 @@
             }
         })();
     </script>
+    
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+    
     <div th:replace="~{fragments :: header}"></div>
 
     <main class="container-main">
-        <div class="form-box" style="max-width: 900px;">
+        
+        <div class="form-box profile-container">
             
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
-                <div style="display: flex; align-items: center; gap: 20px;">
+            <div class="profile-header">
+                <div class="profile-header-info">
                     <div class="profile-pic-container">
                         <img th:if="${perfil.fotoPerfilUrl}" th:src="@{/uploads/{filename}(filename=${perfil.fotoPerfilUrl})}" alt="Foto de Perfil" class="profile-pic">
                         <div th:unless="${perfil.fotoPerfilUrl}" class="profile-pic-placeholder"></div>
                     </div>
                     <div>
-                        <h2 class="main-title" style="text-align: left; margin-bottom: 5px;" th:text="${perfil.nome}"></h2>
-                        <p th:if="${perfil.bio != null and !perfil.bio.isEmpty()}" th:text="${perfil.bio}" style="margin: 0;"></p>
+                        <h2 class="main-title profile-name" th:text="${perfil.nome}"></h2>
+                        <p th:if="${perfil.bio != null and !perfil.bio.isEmpty()}" th:text="${perfil.bio}" class="profile-bio"></p>
                     </div>
                 </div>
                 <div th:if="${session.usuarioLogado != null and session.usuarioLogado.id_usuario == perfil.id_usuario}">
@@ -34,7 +39,7 @@
                 </div>
             </div>
 
-            <hr style="margin: 30px 0;">
+            <hr class="section-divider">
 
             <div th:if="${podeVerDetalhes}">
                 
@@ -44,10 +49,10 @@
                         <p>Este usuário ainda não registrou nenhuma métrica.</p>
                     </div>
                     <div class="event-list" th:unless="${metricas.isEmpty()}">
-                        <div th:each="metrica : ${metricas}" class="metric-card" style="cursor: default;">
+                        <div th:each="metrica : ${metricas}" class="metric-card cursor-default">
                             <div class="card-header">
                                 <h4><span th:text="${metrica.esporte}"></span> - <span th:text="${#temporals.format(metrica.diaMetrica, 'dd/MM/yyyy')}"></span></h4>
-                            </div>
+                                </div>
                             <ul class="metric-details-list">
                                <li th:if="${metrica.gols != null}"><strong>Gols:</strong> <span th:text="${metrica.gols}"></span></li>
                                <li th:if="${metrica.assistencias_futebol != null}"><strong>Assistências:</strong> <span th:text="${metrica.assistencias_futebol}"></span></li>
@@ -63,7 +68,7 @@
                     </div>
                 </div>
 
-                <hr style="margin: 40px 0;">
+                <hr class="section-divider large-margin">
 
                 <div class="history-section">
                     <h3>Eventos Criados</h3>
@@ -71,14 +76,15 @@
                         <p th:text="${perfil.nome} + ' ainda não criou nenhum evento.'"></p>
                     </div>
                     <div class="event-list" th:unless="${eventosCriados == null or eventosCriados.isEmpty()}">
-                        <div th:each="evento : ${eventosCriados}" class="event-card" style="cursor: pointer;" th:onclick="'window.location.href=\'' + @{/evento/{id}(id=${evento.id_evento})} + '\''">
+                        <div th:each="evento : ${eventosCriados}" class="event-card cursor-pointer" 
+                             th:onclick="'window.location.href=\'' + @{/evento/{id}(id=${evento.id_evento})} + '\''">
                             <h4><a th:href="@{/evento/{id}(id=${evento.id_evento})}" th:text="${evento.modalidadeEvento}"></a></h4>
                             <p th:text="'Em ' + ${#temporals.format(evento.dataHoraEvento, 'dd/MM/yyyy')}"></p>
                         </div>
                     </div>
                 </div>
 
-                <hr style="margin: 40px 0;">
+                <hr class="section-divider large-margin">
 
                 <div class="history-section">
                     <h3>Eventos Inscritos</h3>
@@ -86,7 +92,8 @@
                         <p th:text="${perfil.nome} + ' não está inscrito(a) em nenhum evento.'"></p>
                     </div>
                     <div class="event-list" th:unless="${eventosInscritos == null or eventosInscritos.isEmpty()}">
-                        <div th:each="evento : ${eventosInscritos}" class="event-card" style="cursor: pointer;" th:onclick="'window.location.href=\'' + @{/evento/{id}(id=${evento.id_evento})} + '\''">
+                        <div th:each="evento : ${eventosInscritos}" class="event-card cursor-pointer" 
+                             th:onclick="'window.location.href=\'' + @{/evento/{id}(id=${evento.id_evento})} + '\''"> 
                             <h4><a th:href="@{/evento/{id}(id=${evento.id_evento})}" th:text="${evento.modalidadeEvento}"></a></h4>
                             <p th:text="'Em ' + ${#temporals.format(evento.dataHoraEvento, 'dd/MM/yyyy')}"></p>
                             <p>Criado por: <a th:href="@{/perfil/{id}(id=${evento.usuarioCriador.id_usuario})}" th:text="${evento.usuarioCriador.nome}"></a></p>
@@ -95,13 +102,14 @@
                 </div>
             </div>
 
-            <div th:unless="${podeVerDetalhes}" class="no-events-message" style="text-align: center;">
-                <p style="font-size: 1.2rem; font-weight: bold;">🔒 Este perfil é privado.</p>
+            <div th:unless="${podeVerDetalhes}" class="no-events-message text-center">
+                <p class="private-profile-title">🔒 Este perfil é privado.</p>
                 <p>As métricas e atividades do usuário não estão visíveis para o público.</p>
             </div>
             
         </div> 
     </main>
+    
     <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>

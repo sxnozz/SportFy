@@ -3,29 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>SportFy - Cadastro</title>
+    
     <script>
-    (function() {
-        // Verifica a preferência salva no localStorage
-        if (localStorage.getItem('theme') === 'dark-mode') {
-            // Aplica a classe diretamente na tag <html> ANTES da página ser desenhada
-            document.documentElement.classList.add('dark-mode');
-        }
-    })();
-</script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+    
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body class="auth-page">
     <div class="container">
+        
         <h1 class="auth-title">SportFy</h1>
 
         <div th:if="${param.erroSenha}" class="alert alert-error">
             <strong>Erro:</strong> As senhas não coincidem.
             <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
         </div>
+        
         <div th:if="${param.erroEmail}" class="alert alert-error">
             <strong>Erro:</strong> Este e-mail já está cadastrado.
             <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
         </div>
+        
         <div th:if="${param.erroNome}" class="alert alert-error">
             <strong>Erro:</strong> Este nome de usuário já está em uso.
             <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -33,6 +37,7 @@
 
         <div class="form-box">
             <h2>Cadastro</h2>
+            
             <form th:action="@{/cadastro}" method="post">
                 <input type="text" name="nome" placeholder="Insira seu nome" required>
                 <input type="email" name="email" placeholder="Insira seu email" required>
@@ -40,15 +45,17 @@
                 <input type="password" name="confirmeSenha" placeholder="Confirme sua senha" required>
                 <button type="submit">Cadastrar</button>
             </form>
-           <p class="link">
-    Já tem uma conta? 
-    <a th:href="@{/login}">
-        <span>Clique aqui</span>
-    </a>
-</p>
+            
+            <p class="link">
+                Já tem uma conta?
+                <a th:href="@{/login}">
+                    <span>Clique aqui</span>
+                </a>
+            </p>
         </div>
     </div>
-        <script th:src="@{/js/theme.js}"></script>
+    
+    <script th:src="@{/js/theme.js}"></script>
 
 </body>
 </html>

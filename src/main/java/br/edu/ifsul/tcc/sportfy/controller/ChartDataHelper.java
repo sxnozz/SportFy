@@ -9,6 +9,8 @@ import java.util.List;
 
 public class ChartDataHelper {
 
+    // Retorna um JSON (string) com os rótulos apropriados para o esporte.
+    // Entrada: nome do esporte (String). Saída: String contendo um array JSON de labels.
     public String getLabelsAsJson(String esporte) {
         if ("Futebol".equals(esporte)) return "[\"Gols\", \"Assistências\", \"Desarmes\"]";
         if ("Basquete".equals(esporte)) return "[\"Pontos\", \"Assistências\", \"Rebotes\"]";
@@ -16,6 +18,9 @@ public class ChartDataHelper {
         return "[]";
     }
 
+    // Constrói uma lista de valores inteiros a partir do objeto Metrica (substitui nulos por 0)
+    // e a serializa para JSON. Retorna "[]" se ocorrer erro na serialização.
+    // Entrada: Metrica metrica — contém valores por esporte. Saída: String JSON com os valores.
     public String getValuesAsJson(Metrica metrica) {
         List<Integer> values;
         // CORREÇÃO: Verifica se os valores são nulos e, se forem, usa 0

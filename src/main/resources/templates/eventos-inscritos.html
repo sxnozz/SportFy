@@ -3,46 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>SportFy - Eventos Inscritos</title>
+    
     <script>
-    (function() {
-        // Verifica a preferência salva no localStorage
-        if (localStorage.getItem('theme') === 'dark-mode') {
-            // Aplica a classe diretamente na tag <html> ANTES da página ser desenhada
-            document.documentElement.classList.add('dark-mode');
-        }
-    })();
-</script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+    
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+    
     <div th:replace="~{fragments :: header}"></div>
 
     <main class="container-main">
         
-        <section class="events-section" style="flex: 1; max-width: 900px; margin: 0 auto;">
-            <h2 class="main-title">Eventos em que Estou Inscrito</h2>
+        <div class="content-wrapper-medium">
+            <section class="events-section">
+                <h2 class="main-title">Eventos em que Estou Inscrito</h2>
 
-            <div th:if="${eventos.isEmpty()}" class="no-events-message" style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
-                <p>Você ainda não se inscreveu em nenhum evento.</p>
-                <a th:href="@{/}" class="btn-ver-mais" style="margin-top: 10px;">Ver todos os eventos</a>
-            </div>
-
-            <div th:unless="${eventos.isEmpty()}" class="event-list">
-                <div th:each="evento : ${eventos}" class="event-card">
-                    <h3 th:text="${evento.modalidadeEvento}">Modalidade do Evento</h3>
-                    <p><strong>Local:</strong> <span th:text="${evento.lugar}"></span></p>
-                    
-                    <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.dataHoraEvento, 'dd/MM/yyyy HH:mm')}"></span></p>
-                    
-                    <p><strong>Criador:</strong> <span th:text="${evento.usuarioCriador.nome}"></span></p>
-                    
-                    <a th:href="@{/evento/{id}(id=${evento.id_evento}, from='eventosInscritos')}" class="btn-ver-mais">Ver Detalhes</a>
+                <div th:if="${eventos.isEmpty()}" class="no-events-message">
+                    <p>Você ainda não se inscreveu em nenhum evento.</p>
+                    <a th:href="@{/}" class="btn-ver-mais">Ver todos os eventos</a>
                 </div>
-            </div>
-        </section>
+
+                <div th:unless="${eventos.isEmpty()}" class="event-list">
+                    
+                    <div th:each="evento : ${eventos}" class="event-card">
+                        <h3 th:text="${evento.modalidadeEvento}">Modalidade do Evento</h3>
+                        <p><strong>Local:</strong> <span th:text="${evento.lugar}"></span></p>
+                        
+                        <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.dataHoraEvento, 'dd/MM/yyyy HH:mm')}"></span></p>
+                        
+                        <p><strong>Criador:</strong> <span th:text="${evento.usuarioCriador.nome}"></span></p>
+                        
+                        <a th:href="@{/evento/{id}(id=${evento.id_evento}, from='eventosInscritos')}" class="btn-ver-mais">Ver Detalhes</a>
+                    </div>
+                </div>
+            </section>
+        </div>
 
     </main>
-        <script th:src="@{/js/theme.js}"></script>
+    
+    <script th:src="@{/js/theme.js}"></script>
 
 </body>
 </html>

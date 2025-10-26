@@ -4,22 +4,23 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat; // <-- 1. Importe a anotação
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
 @Setter
 public class Metrica {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_metrica;
-    
-    @DateTimeFormat(pattern = "yyyy-MM-dd") // <-- 2. Adicione esta anotação
-    private LocalDate diaMetrica;
-    
-    private String esporte;
+    private Long id_metrica; // ID único da métrica
 
-    // Métricas
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate diaMetrica; // Data da métrica
+
+    private String esporte; // Esporte relacionado à métrica (Futebol, Basquete, Vôlei)
+
+    // Métricas específicas de cada esporte
     private Integer gols;
     private Integer assistencias_futebol;
     private Integer desarmes;
@@ -32,5 +33,5 @@ public class Metrica {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
-    private Usuario usuario;
+    private Usuario usuario; // Usuário dono da métrica
 }

@@ -1,4 +1,3 @@
-// Novo arquivo: br/edu/ifsul/tcc/sportfy/service/FileStorageService.java
 package br.edu.ifsul.tcc.sportfy.service;
 
 import org.springframework.stereotype.Service;
@@ -14,38 +13,41 @@ import java.util.UUID;
 @Service
 public class FileStorageService {
 
-    // Define o diretório onde as imagens serão salvas
+    // Diretório onde as imagens serão salvas
     private final Path rootLocation = Paths.get("uploads");
 
     public FileStorageService() {
         try {
-            // Cria o diretório se ele não existir
+            // Cria a pasta uploads se não existir
             Files.createDirectories(rootLocation);
         } catch (IOException e) {
-            throw new RuntimeException("Could not initialize storage", e);
+            throw new RuntimeException("Não foi possível inicializar o storage", e);
         }
     }
 
     public String store(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new RuntimeException("Failed to store empty file.");
+            throw new RuntimeException("Não é possível salvar arquivo vazio.");
         }
         try {
-            // Gera um nome de arquivo único para evitar conflitos
+            // Gera nome único para evitar sobrescrever arquivos
             String originalFilename = file.getOriginalFilename();
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             String uniqueFilename = UUID.randomUUID().toString() + extension;
 
             Path destinationFile = this.rootLocation.resolve(Paths.get(uniqueFilename))
-                                                    .normalize().toAbsolutePath();
+                                                    .normalize()
+                                                    .toAbsolutePath();
 
+            // Copia o arquivo para o destino
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
             }
-            // Retorna apenas o nome do arquivo salvo
+
+            // Retorna o nome do arquivo salvo
             return uniqueFilename;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to store file.", e);
+            throw new RuntimeException("Falha ao salvar arquivo.", e);
         }
     }
 }

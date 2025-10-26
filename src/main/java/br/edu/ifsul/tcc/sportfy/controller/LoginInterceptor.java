@@ -10,12 +10,14 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
+    // Intercepta requisições antes do controller ser chamado.
+    // Objetivo: bloquear acesso a rotas que requerem autenticação.
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // Pega a URL que o usuário está tentando acessar
         String requestURI = request.getRequestURI();
 
-        // Lista de URLs que NÃO precisam de login
+        // Lista de URLs que NÃO precisam de login — libera esses caminhos.
         if (requestURI.equals("/login") || 
             requestURI.equals("/cadastro") || 
             requestURI.startsWith("/css/") || 
@@ -24,7 +26,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             return true; // Deixa passar
         }
         
-        // Pega a sessão
+        // Pega a sessão do usuário
         HttpSession session = request.getSession();
 
         // Verifica se o atributo "usuarioLogado" existe na sessão
