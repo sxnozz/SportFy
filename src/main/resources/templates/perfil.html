@@ -2,9 +2,12 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título dinâmico com nome do usuário exibido -->
     <title th:text="'Perfil de ' + ${perfil.nome}">Perfil de Usuário</title>
     
+    <!-- Aplica o tema escuro salvo no localStorage antes de renderizar a página -->
     <script>
         (function() {
             if (localStorage.getItem('theme') === 'dark-mode') {
@@ -17,23 +20,44 @@
 </head>
 <body>
     
+    <!-- Cabeçalho padrão (navbar, tema, usuário logado etc.) -->
     <div th:replace="~{fragments :: header}"></div>
 
     <main class="container-main">
-        
         <div class="form-box profile-container">
             
+            <!-- Cabeçalho do perfil (foto + nome + bio + botão editar se for o próprio usuário) -->
             <div class="profile-header">
+                
                 <div class="profile-header-info">
                     <div class="profile-pic-container">
-                        <img th:if="${perfil.fotoPerfilUrl}" th:src="@{/uploads/{filename}(filename=${perfil.fotoPerfilUrl})}" alt="Foto de Perfil" class="profile-pic">
-                        <div th:unless="${perfil.fotoPerfilUrl}" class="profile-pic-placeholder"></div>
+                        <!-- Mostra foto de perfil, ou um placeholder se o usuário não tem foto -->
+                        <img
+                            th:if="${perfil.fotoPerfilUrl}"
+                            th:src="@{/uploads/{filename}(filename=${perfil.fotoPerfilUrl})}"
+                            alt="Foto de Perfil"
+                            class="profile-pic"
+                        >
+                        <div
+                            th:unless="${perfil.fotoPerfilUrl}"
+                            class="profile-pic-placeholder"
+                        ></div>
                     </div>
+
                     <div>
+                        <!-- Nome do usuário -->
                         <h2 class="main-title profile-name" th:text="${perfil.nome}"></h2>
-                        <p th:if="${perfil.bio != null and !perfil.bio.isEmpty()}" th:text="${perfil.bio}" class="profile-bio"></p>
+
+                        <!-- Bio visível só se existir conteúdo -->
+                        <p
+                            th:if="${perfil.bio != null and !perfil.bio.isEmpty()}"
+                            th:text="${perfil.bio}"
+                            class="profile-bio"
+                        ></p>
                     </div>
                 </div>
+
+                <!-- Botão 'Editar Perfil' só aparece se o perfil exibido for do usuário logado -->
                 <div th:if="${session.usuarioLogado != null and session.usuarioLogado.id_usuario == perfil.id_usuario}">
                     <a th:href="@{/perfil/editar}" class="btn-edit">Editar Perfil</a>
                 </div>
@@ -41,28 +65,76 @@
 
             <hr class="section-divider">
 
+            <!-- Se o visitante tem permissão pra ver detalhes (perfil público OU é o dono),
+                 mostra estatísticas e eventos -->
             <div th:if="${podeVerDetalhes}">
                 
+                <!-- Seção: métricas esportivas do usuário -->
                 <div class="history-section">
                     <h3>Métricas de Desempenho</h3>
+
+                    <!-- Mensagem caso o usuário não tenha registrado métricas ainda -->
                     <div th:if="${metricas.isEmpty()}" class="no-events-message">
                         <p>Este usuário ainda não registrou nenhuma métrica.</p>
                     </div>
+
+                    <!-- Lista de métricas (ex.: gols, rebotes, etc.) -->
                     <div class="event-list" th:unless="${metricas.isEmpty()}">
                         <div th:each="metrica : ${metricas}" class="metric-card cursor-default">
                             <div class="card-header">
-                                <h4><span th:text="${metrica.esporte}"></span> - <span th:text="${#temporals.format(metrica.diaMetrica, 'dd/MM/yyyy')}"></span></h4>
-                                </div>
+                                <h4>
+                                    <span th:text="${metrica.esporte}"></span>
+                                    -
+                                    <span th:text="${#temporals.format(metrica.diaMetrica, 'dd/MM/yyyy')}"></span>
+                                </h4>
+                            </div>
+
+                            <!-- Lista só mostra os campos que não são nulos -->
                             <ul class="metric-details-list">
-                               <li th:if="${metrica.gols != null}"><strong>Gols:</strong> <span th:text="${metrica.gols}"></span></li>
-                               <li th:if="${metrica.assistencias_futebol != null}"><strong>Assistências:</strong> <span th:text="${metrica.assistencias_futebol}"></span></li>
-                               <li th:if="${metrica.desarmes != null}"><strong>Desarmes:</strong> <span th:text="${metrica.desarmes}"></span></li>
-                               <li th:if="${metrica.pontos_basquete != null}"><strong>Pontos:</strong> <span th:text="${metrica.pontos_basquete}"></span></li>
-                               <li th:if="${metrica.assistencias_basquete != null}"><strong>Assistências:</strong> <span th:text="${metrica.assistencias_basquete}"></span></li>
-                               <li th:if="${metrica.rebotes != null}"><strong>Rebotes:</strong> <span th:text="${metrica.rebotes}"></span></li>
-                               <li th:if="${metrica.pontos_volei != null}"><strong>Pontos:</strong> <span th:text="${metrica.pontos_volei}"></span></li>
-                               <li th:if="${metrica.aces != null}"><strong>Aces:</strong> <span th:text="${metrica.aces}"></span></li>
-                               <li th:if="${metrica.bloqueios != null}"><strong>Bloqueios:</strong> <span th:text="${metrica.bloqueios}"></span></li>
+                                <li th:if="${metrica.gols != null}">
+                                    <strong>Gols:</strong>
+                                    <span th:text="${metrica.gols}"></span>
+                                </li>
+
+                                <li th:if="${metrica.assistencias_futebol != null}">
+                                    <strong>Assistências:</strong>
+                                    <span th:text="${metrica.assistencias_futebol}"></span>
+                                </li>
+
+                                <li th:if="${metrica.desarmes != null}">
+                                    <strong>Desarmes:</strong>
+                                    <span th:text="${metrica.desarmes}"></span>
+                                </li>
+
+                                <li th:if="${metrica.pontos_basquete != null}">
+                                    <strong>Pontos:</strong>
+                                    <span th:text="${metrica.pontos_basquete}"></span>
+                                </li>
+
+                                <li th:if="${metrica.assistencias_basquete != null}">
+                                    <strong>Assistências:</strong>
+                                    <span th:text="${metrica.assistencias_basquete}"></span>
+                                </li>
+
+                                <li th:if="${metrica.rebotes != null}">
+                                    <strong>Rebotes:</strong>
+                                    <span th:text="${metrica.rebotes}"></span>
+                                </li>
+
+                                <li th:if="${metrica.pontos_volei != null}">
+                                    <strong>Pontos:</strong>
+                                    <span th:text="${metrica.pontos_volei}"></span>
+                                </li>
+
+                                <li th:if="${metrica.aces != null}">
+                                    <strong>Aces:</strong>
+                                    <span th:text="${metrica.aces}"></span>
+                                </li>
+
+                                <li th:if="${metrica.bloqueios != null}">
+                                    <strong>Bloqueios:</strong>
+                                    <span th:text="${metrica.bloqueios}"></span>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -70,15 +142,29 @@
 
                 <hr class="section-divider large-margin">
 
+                <!-- Seção: eventos criados por esse usuário -->
                 <div class="history-section">
                     <h3>Eventos Criados</h3>
+
                     <div th:if="${eventosCriados == null or eventosCriados.isEmpty()}" class="no-events-message">
                         <p th:text="${perfil.nome} + ' ainda não criou nenhum evento.'"></p>
                     </div>
+
+                    <!-- Lista de eventos criados pelo usuário.
+                         Cada card é clicável e manda para a página do evento -->
                     <div class="event-list" th:unless="${eventosCriados == null or eventosCriados.isEmpty()}">
-                        <div th:each="evento : ${eventosCriados}" class="event-card cursor-pointer" 
-                             th:onclick="'window.location.href=\'' + @{/evento/{id}(id=${evento.id_evento})} + '\''">
-                            <h4><a th:href="@{/evento/{id}(id=${evento.id_evento})}" th:text="${evento.modalidadeEvento}"></a></h4>
+                        <div
+                            th:each="evento : ${eventosCriados}"
+                            class="event-card cursor-pointer"
+                            th:onclick="'window.location.href=\'' + @{/evento/{id}(id=${evento.id_evento})} + '\''"
+                        >
+                            <h4>
+                                <a
+                                    th:href="@{/evento/{id}(id=${evento.id_evento})}"
+                                    th:text="${evento.modalidadeEvento}"
+                                ></a>
+                            </h4>
+
                             <p th:text="'Em ' + ${#temporals.format(evento.dataHoraEvento, 'dd/MM/yyyy')}"></p>
                         </div>
                     </div>
@@ -86,22 +172,43 @@
 
                 <hr class="section-divider large-margin">
 
+                <!-- Seção: eventos onde o usuário está inscrito como participante -->
                 <div class="history-section">
                     <h3>Eventos Inscritos</h3>
+
                     <div th:if="${eventosInscritos == null or eventosInscritos.isEmpty()}" class="no-events-message">
                         <p th:text="${perfil.nome} + ' não está inscrito(a) em nenhum evento.'"></p>
                     </div>
+
+                    <!-- Lista de eventos em que ele é participante -->
                     <div class="event-list" th:unless="${eventosInscritos == null or eventosInscritos.isEmpty()}">
-                        <div th:each="evento : ${eventosInscritos}" class="event-card cursor-pointer" 
-                             th:onclick="'window.location.href=\'' + @{/evento/{id}(id=${evento.id_evento})} + '\''"> 
-                            <h4><a th:href="@{/evento/{id}(id=${evento.id_evento})}" th:text="${evento.modalidadeEvento}"></a></h4>
+                        <div
+                            th:each="evento : ${eventosInscritos}"
+                            class="event-card cursor-pointer"
+                            th:onclick="'window.location.href=\'' + @{/evento/{id}(id=${evento.id_evento})} + '\''"
+                        >
+                            <h4>
+                                <a
+                                    th:href="@{/evento/{id}(id=${evento.id_evento})}"
+                                    th:text="${evento.modalidadeEvento}"
+                                ></a>
+                            </h4>
+
                             <p th:text="'Em ' + ${#temporals.format(evento.dataHoraEvento, 'dd/MM/yyyy')}"></p>
-                            <p>Criado por: <a th:href="@{/perfil/{id}(id=${evento.usuarioCriador.id_usuario})}" th:text="${evento.usuarioCriador.nome}"></a></p>
+
+                            <p>
+                                Criado por:
+                                <a
+                                    th:href="@{/perfil/{id}(id=${evento.usuarioCriador.id_usuario})}"
+                                    th:text="${evento.usuarioCriador.nome}"
+                                ></a>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Caso o perfil seja privado e o visitante não tenha permissão -->
             <div th:unless="${podeVerDetalhes}" class="no-events-message text-center">
                 <p class="private-profile-title">🔒 Este perfil é privado.</p>
                 <p>As métricas e atividades do usuário não estão visíveis para o público.</p>

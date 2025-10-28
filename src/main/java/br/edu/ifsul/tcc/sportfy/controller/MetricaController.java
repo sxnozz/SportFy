@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,74 +21,74 @@ import java.util.Optional;
 @Controller
 public class MetricaController {
 
-    // Logger para mensagens de debug/info/warn.
     private static final Logger logger = LoggerFactory.getLogger(MetricaController.class);
 
-    // Repositório para salvar, buscar e excluir métricas.
     @Autowired
     private MetricaRepository metricaRepository;
 
-    // Exibe as métricas do usuário logado ordenadas da mais recente para a mais antiga.
-    // Também prepara um objeto vazio para o formulário de nova métrica e o helper de gráficos.
+    /** Página "Minhas Métricas": lista histórico e prepara form de nova métrica. */
     @GetMapping("/minhas-metricas")
     public String exibirMinhasMetricas(Model model, HttpSession session) {
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-        if (usuarioLogado == null) {
-            return "redirect:/login";
-        }
+        if (usuarioLogado == null) return "redirect:/login";
 
         List<Metrica> metricas = metricaRepository.findByUsuarioOrderByDiaMetricaDesc(usuarioLogado);
 
         model.addAttribute("metricas", metricas);
         model.addAttribute("novaMetrica", new Metrica());
         model.addAttribute("activePage", "minhasMetricas");
-        model.addAttribute("chartHelper", new ChartDataHelper());
+        model.addAttribute("chartHelper", new ChartDataHelper()); // usado no template
 
         return "minhas-metricas";
     }
 
-    // Salva uma nova métrica associada ao usuário logado.
+    /** Salva nova métrica para o usuário logado e redireciona com toast. */
     @PostMapping("/metricas/nova")
-    public String salvarNovaMetrica(@ModelAttribute Metrica novaMetrica, HttpSession session) {
+    public String salvarNovaMetrica(@ModelAttribute Metrica novaMetrica,
+                                    HttpSession session,
+                                    RedirectAttributes ra) {
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-        if (usuarioLogado == null) {
-            return "redirect:/login";
-        }
+        if (usuarioLogado == null) return "redirect:/login";
+
         novaMetrica.setUsuario(usuarioLogado);
         metricaRepository.save(novaMetrica);
+
+        ra.addFlashAttribute("toastMessage", "Métrica salva com sucesso!");
         return "redirect:/minhas-metricas";
     }
 
-    // Exclui uma métrica se ela pertencer ao usuário logado.
+    /** Exclui métrica (se pertencer ao usuário) e redireciona com toast. */
     @PostMapping("/metricas/excluir/{id}")
-    public String excluirMetrica(@PathVariable Long id, HttpSession session) {
+    public String excluirMetrica(@PathVariable Long id,
+                                 HttpSession session,
+                                 RedirectAttributes ra) {
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-        if (usuarioLogado == null) {
-            return "redirect:/login";
-        }
+        if (usuarioLogado == null) return "redirect:/login";
 
-        metricaRepository.findById(id).ifPresent(metrica -> {
-            if (metrica.getUsuario().getId_usuario().equals(usuarioLogado.getId_usuario())) {
+        metricaRepository.findById(id).ifPresent(m -> {
+            if (m.getUsuario().getId_usuario().equals(usuarioLogado.getId_usuario())) {
                 metricaRepository.deleteById(id);
             }
         });
 
+        ra.addFlashAttribute("toastMessage", "Métrica excluída.");
         return "redirect:/minhas-metricas";
     }
 
-    // Mostra o formulário de edição para uma métrica, somente se o usuário for o dono.
+    /** Formulário de edição (somente dono da métrica). */
     @GetMapping("/metricas/editar/{id}")
-    public String exibirFormularioEditar(@PathVariable Long id, Model model, HttpSession session) {
+    public String exibirFormularioEditar(@PathVariable Long id,
+                                         Model model,
+                                         HttpSession session) {
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-        if (usuarioLogado == null) {
-            return "redirect:/login";
-        }
+        if (usuarioLogado == null) return "redirect:/login";
 
         Optional<Metrica> metricaOpt = metricaRepository.findById(id);
-        if (metricaOpt.isPresent() && metricaOpt.get().getUsuario().getId_usuario().equals(usuarioLogado.getId_usuario())) {
-            Metrica metrica = metricaOpt.get();
+        if (metricaOpt.isPresent()
+                && metricaOpt.get().getUsuario().getId_usuario().equals(usuarioLogado.getId_usuario())) {
 
-            logger.info("--- DEBUG SPORTFY --- Editando Métrica ID: {} | Esporte: {} | Data: {}",
+            Metrica metrica = metricaOpt.get();
+            logger.info("Editando Métrica ID: {} | Esporte: {} | Data: {}",
                     metrica.getId_metrica(), metrica.getEsporte(), metrica.getDiaMetrica());
 
             model.addAttribute("metrica", metrica);
@@ -98,16 +99,19 @@ public class MetricaController {
         return "redirect:/minhas-metricas";
     }
 
-    // Processa a edição da métrica — atualiza campos permitidos e salva.
+    /** Atualiza campos da métrica (somente dono) e redireciona com toast. */
     @PostMapping("/metricas/editar/{id}")
-    public String processarEdicaoMetrica(@PathVariable Long id, @ModelAttribute Metrica metricaAtualizada, HttpSession session) {
+    public String processarEdicaoMetrica(@PathVariable Long id,
+                                         @ModelAttribute Metrica metricaAtualizada,
+                                         HttpSession session,
+                                         RedirectAttributes ra) {
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
-        if (usuarioLogado == null) {
-            return "redirect:/login";
-        }
+        if (usuarioLogado == null) return "redirect:/login";
 
         Optional<Metrica> metricaOpt = metricaRepository.findById(id);
-        if (metricaOpt.isPresent() && metricaOpt.get().getUsuario().getId_usuario().equals(usuarioLogado.getId_usuario())) {
+        if (metricaOpt.isPresent()
+                && metricaOpt.get().getUsuario().getId_usuario().equals(usuarioLogado.getId_usuario())) {
+
             Metrica metricaOriginal = metricaOpt.get();
 
             metricaOriginal.setDiaMetrica(metricaAtualizada.getDiaMetrica());
@@ -126,6 +130,8 @@ public class MetricaController {
             metricaOriginal.setBloqueios(metricaAtualizada.getBloqueios());
 
             metricaRepository.save(metricaOriginal);
+
+            ra.addFlashAttribute("toastMessage", "Métrica atualizada com sucesso!");
         }
 
         return "redirect:/minhas-metricas";

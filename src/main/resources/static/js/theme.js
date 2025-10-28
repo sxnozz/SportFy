@@ -1,45 +1,43 @@
-/**
- * Espera o documento HTML ser completamente carregado para
- * inicializar a lógica de troca de tema (Dark/Light Mode).
- */
+// ---------------------------------------------------------
+// THEME.JS
+// Responsável por:
+//  - Alternar entre modo claro e escuro (classe .dark-mode no <html>)
+//  - Salvar a escolha no localStorage, assim ela persiste em todas as páginas
+//  - Redesenhar o gráfico radar (se já estiver visível) para atualizar as cores
+// ---------------------------------------------------------
+
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // Seleciona o <input type="checkbox"> que funciona como botão "toggle"
+
+    // Checkbox do header que liga/desliga o tema (o "switch" de lua/sol)
     const toggleSwitch = document.querySelector('#checkbox');
 
-    // Verifica no carregamento da página se o tema 'dark-mode'
-    // está salvo no localStorage (armazenamento do navegador).
+    // Ajusta visualmente o estado inicial do switch:
+    // se "dark-mode" estiver salvo no navegador, marca o checkbox.
     if (localStorage.getItem('theme') === 'dark-mode') {
-        // Se estiver, marca o checkbox como "ativo"
         toggleSwitch.checked = true;
     }
 
-    // Adiciona um "ouvinte" para o evento 'change' (quando o checkbox é clicado)
-    toggleSwitch.addEventListener('change', function() {
-        
-        // Adiciona ou remove a classe 'dark-mode' da tag <html> (document.documentElement)
-        // Isso permite que o CSS aplique os estilos do tema correto.
+    // Quando o usuário clica para trocar o tema
+    toggleSwitch.addEventListener('change', function () {
+
+        // Alterna a classe 'dark-mode' no elemento <html>
+        // O CSS usa essa classe pra mudar todas as cores da interface
         document.documentElement.classList.toggle('dark-mode');
 
-        // Verifica se o checkbox foi marcado ou desmarcado
+        // Atualiza o localStorage para manter a preferência nas próximas páginas
         if (this.checked) {
-            // Se foi marcado (agora está em modo escuro), salva a preferência
             localStorage.setItem('theme', 'dark-mode');
         } else {
-            // Se foi desmarcado (agora está em modo claro), salva a preferência
             localStorage.setItem('theme', 'light-mode');
         }
 
-        // --- Atualização do Gráfico ---
-        
-        // Verifica se:
-        // 1. A função 'drawRadarChart' existe.
-        // 2. Um gráfico ('window.myRadarChart') já foi desenhado.
-        // 3. Os dados ('window.currentChartData') estão disponíveis.
-        if (typeof drawRadarChart === 'function' && window.myRadarChart && window.currentChartData) {
-            
-            // Se tudo for verdadeiro, chama a função para redesenhar o gráfico
-            // A função 'drawRadarChart' vai detectar o novo tema e usar as cores corretas.
+        // Se um gráfico radar já foi desenhado, redesenha com nova paleta de cores
+        // (drawRadarChart está definida em main.js)
+        if (
+            typeof drawRadarChart === 'function' &&
+            window.myRadarChart &&
+            window.currentChartData
+        ) {
             drawRadarChart(window.currentChartData);
         }
     });

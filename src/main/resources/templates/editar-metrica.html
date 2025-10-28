@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>SportFy - Editar Métrica</title>
     
+    <!-- Script que verifica o tema atual salvo no navegador -->
     <script>
         (function() {
             if (localStorage.getItem('theme') === 'dark-mode') {
@@ -12,20 +13,24 @@
         })();
     </script>
     
+    <!-- Importa o CSS principal -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
-    
+    <!-- Cabeçalho comum (fragmento) -->
     <div th:replace="~{fragments :: header}"></div>
 
     <main class="container-main">
-        
         <div class="form-box">
             
             <h2 class="form-title">Editar Métrica</h2>
             
-            <form th:action="@{/metricas/editar/{id}(id=${metrica.id_metrica})}" th:object="${metrica}" method="post" class="event-form">
+            <!-- Formulário para editar métricas -->
+            <form th:action="@{/metricas/editar/{id}(id=${metrica.id_metrica})}" 
+                  th:object="${metrica}" method="post" class="event-form">
                 
+                <!-- Modalidade exibida, não editável -->
                 <div class="form-group">
                     <label>Modalidade:</label>
                     <p style="padding: 12px; background-color: #f2f2f2; border: 1px solid #ccc; border-radius: 5px; margin: 0;">
@@ -33,13 +38,17 @@
                     </p>
                     <input type="hidden" name="esporte" th:value="${metrica.esporte}" />
                     <small class="form-hint">A modalidade não pode ser alterada após o registro.</small>              
-                  </div>
-
-                <div class="form-group">
-                    <label for="diaMetrica">Data da Atividade:</label>
-                    <input type="date" id="diaMetrica" name="diaMetrica" th:value="${#temporals.format(metrica.diaMetrica, 'yyyy-MM-dd')}" required>
                 </div>
 
+                <!-- Data da atividade -->
+                <div class="form-group">
+                    <label for="diaMetrica">Data da Atividade:</label>
+                    <input type="date" id="diaMetrica" name="diaMetrica" 
+                           th:value="${#temporals.format(metrica.diaMetrica, 'yyyy-MM-dd')}" required>
+                </div>
+
+                <!-- Campos exibidos conforme o esporte -->
+                <!-- ===== FUTEBOL ===== -->
                 <div id="metricas_futebol" class="metric-fields"
                      th:style="${metrica.esporte == 'Futebol' ? 'display:block;' : 'display:none;'}">
                     <div class="form-group"><label>Gols:</label><input type="number" th:field="*{gols}"></div>
@@ -47,6 +56,7 @@
                     <div class="form-group"><label>Desarmes:</label><input type="number" th:field="*{desarmes}"></div>
                 </div>
 
+                <!-- ===== BASQUETE ===== -->
                 <div id="metricas_basquete" class="metric-fields"
                      th:style="${metrica.esporte == 'Basquete' ? 'display:block;' : 'display:none;'}">
                     <div class="form-group"><label>Pontos:</label><input type="number" th:field="*{pontos_basquete}"></div>
@@ -54,6 +64,7 @@
                     <div class="form-group"><label>Rebotes:</label><input type="number" th:field="*{rebotes}"></div>
                 </div>
 
+                <!-- ===== VÔLEI ===== -->
                 <div id="metricas_volei" class="metric-fields"
                      th:style="${metrica.esporte == 'Vôlei' ? 'display:block;' : 'display:none;'}">
                     <div class="form-group"><label>Pontos:</label><input type="number" th:field="*{pontos_volei}"></div>
@@ -61,13 +72,14 @@
                     <div class="form-group"><label>Bloqueios:</label><input type="number" th:field="*{bloqueios}"></div>
                 </div>
 
+                <!-- Botão para enviar as alterações -->
                 <button type="submit" class="btn-submit-form">Salvar Alterações</button>
             </form>
         </div>
     </main>
 
+    <!-- Scripts principais -->
     <script th:src="@{/js/main.js}"></script>
     <script th:src="@{/js/theme.js}"></script>
-
 </body>
 </html>

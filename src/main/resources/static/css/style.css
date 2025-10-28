@@ -348,6 +348,38 @@ html:not(.dark-mode) .main-title {
     text-align: left;
 }
 
+
+
+.readonly-field {
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid var(--cor-borda);
+    background-color: var(--cor-input-bg, #f2f2f2);
+    color: var(--cor-texto-principal);
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    /* forçar mesma tipografia / altura visual do input */
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+/* Tema CLARO (quando NÃO está .dark-mode) */
+html:not(.dark-mode) .readonly-field {
+    background-color: #f2f2f2;
+    border: 1px solid rgba(0,0,0,0.2);
+    color: #2c2c2c;
+}
+
+/* Tema ESCURO */
+html.dark-mode .readonly-field {
+    background-color: #1a1f29;       
+    border: 1px solid #4a5568;        
+    color: #e2e8f0;                 
+}
+
+
 /* Rótulos (label) dentro de .event-form. */
 .event-form label {
     display: block;
@@ -1321,3 +1353,285 @@ html.dark-mode .input-file-label.disabled svg {
 .cursor-pointer {
     cursor: pointer;
 }
+
+/* =================================== */
+/* DESTAQUE DE CARD SELECIONADO - COMUM */
+/* (estilos compartilhados entre temas) */
+/* =================================== */
+
+.metric-card {
+    /* suaviza transições ao destacar/hover */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
+    border: 2px solid transparent; /* borda neutra por padrão */
+    /* define um "fallback" visual para navegadores antigos */
+    will-change: transform;
+}
+
+/* leve elevação ao passar o mouse */
+.metric-card:hover {
+    transform: translateY(-3px);
+}
+
+/* acessibilidade visual: estilo de foco caso futuramente torne o card tabbable.
+   Observação: para foco por teclado você precisa adicionar tabindex="0" no HTML. */
+.metric-card:focus {
+    outline: none; /* removemos a outline padrão para aplicar border customizada */
+    box-shadow: 0 0 8px rgba(0,0,0,0.12);
+}
+
+/* =================================== */
+/* MODO ESCURO (aplica quando html.dark-mode está presente) */
+/* =================================== */
+
+/* regras específicas para o destaque em modo escuro */
+html.dark-mode .metric-card.selected {
+    /* borda azul-clara para contraste com fundo escuro */
+    border: 2px solid #49c6e5;
+    /* brilho/halo mais visível no dark-mode */
+    box-shadow: 0 0 10px rgba(73, 198, 229, 0.6);
+    transform: translateY(-2px);
+}
+
+/* pequena variante de hover/selecionado no dark-mode para não ficar muito forte */
+html.dark-mode .metric-card:hover {
+    transform: translateY(-2.5px);
+}
+
+/* ===========================
+   DESTAQUE (MODO CLARO) - MAIS VISÍVEL
+   ===========================
+   Substitua/cole este bloco no final do style.css
+*/
+html:not(.dark-mode) .metric-card.selected {
+    /* borda mais saturada e perceptível em fundo claro */
+    border: 2px solid #0057e7; /* azul forte */
+    /* sombra mais pronunciada para criar contraste contra fundo claro */
+    box-shadow: 0 8px 30px rgba(0, 87, 231, 0.20), /* halo externo */
+                0 2px 6px rgba(0, 0, 0, 0.08);     /* sombra de profundidade */
+    transform: translateY(-2px);
+    /* pequena elevação extra */
+    z-index: 2;
+}
+
+/* hover mais perceptível no modo claro (opcional; mantém consistência) */
+html:not(.dark-mode) .metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 34px rgba(0, 87, 231, 0.16), 0 4px 8px rgba(0,0,0,0.06);
+}
+
+
+
+
+/* ===========================================================
+   TOAST / ALERTA FLUTUANTE REUTILIZÁVEL
+   =========================================================== */
+
+/* container fixo onde os toasts vão sendo empilhados */
+.toast-container {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 9999;
+}
+
+/* bloco visual do toast */
+.toast {
+    position: relative;
+    min-width: 260px;
+    max-width: 320px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    background: var(--cor-caixa);
+    color: var(--cor-texto-principal);
+
+    border: 1px solid var(--cor-borda);
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+
+    padding: 15px 40px 15px 15px;
+    line-height: 1.4;
+    font-size: 0.95rem;
+    overflow: hidden;
+
+    /* faixa colorida lateral */
+    border-left-width: 6px;
+    border-left-style: solid;
+    border-left-color: var(--toast-accent, #3b82f6);
+}
+
+/* ícone simples à esquerda */
+.toast__icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+    line-height: 1;
+    color: var(--toast-accent, #3b82f6);
+    margin-top: 2px;
+}
+
+/* corpo da mensagem */
+.toast__body {
+    flex: 1;
+    word-break: break-word;
+    color: inherit;
+    padding-right: 20px; /* espaço pro X */
+}
+
+/* botão X pra fechar */
+.toast__close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: inherit;
+    background: none;
+    border: none;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.5;
+    padding: 4px;
+}
+.toast__close:hover {
+    opacity: 0.9;
+}
+
+/* barra de progresso (tempo restante do toast) */
+.toast__progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 4px;
+    width: 100%;
+    background: var(--toast-accent, #3b82f6);
+    border-radius: 0 0 4px 4px;
+    animation: toast-progress-deplete 5s linear forwards;
+}
+
+/* -------- VARIAÇÕES DE STATUS (só trocam a cor-acento) -------- */
+.toast--success {
+    --toast-accent: #16a34a; /* verde */
+}
+.toast--info {
+    --toast-accent: #2563eb; /* azul */
+}
+.toast--warning {
+    --toast-accent: #f59e0b; /* amarelo */
+}
+.toast--error {
+    --toast-accent: #ef4444; /* vermelho */
+}
+
+/* -------- MODO CLARO -------- */
+html:not(.dark-mode) .toast {
+    background: #ffffff;
+    color: #343a40;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow:
+        0 14px 28px rgba(0, 0, 0, 0.12),
+        0 8px 12px rgba(0, 0, 0, 0.08);
+    border-left-color: var(--toast-accent, #3b82f6);
+}
+html:not(.dark-mode) .toast__icon {
+    color: var(--toast-accent, #3b82f6);
+}
+html:not(.dark-mode) .toast__progress {
+    background: var(--toast-accent, #3b82f6);
+}
+
+/* dar um pouquinho mais de personalidade por status no claro */
+html:not(.dark-mode) .toast--success {
+    border-color: rgba(22, 163, 74, 0.35);
+    box-shadow:
+        0 16px 30px rgba(22, 163, 74, 0.16),
+        0 8px 12px rgba(22, 163, 74, 0.10),
+        0 2px 4px rgba(0, 0, 0, 0.06);
+}
+html:not(.dark-mode) .toast--info {
+    border-color: rgba(37, 99, 235, 0.35);
+    box-shadow:
+        0 16px 30px rgba(37, 99, 235, 0.16),
+        0 8px 12px rgba(37, 99, 235, 0.10),
+        0 2px 4px rgba(0, 0, 0, 0.06);
+}
+html:not(.dark-mode) .toast--warning {
+    border-color: rgba(245, 158, 11, 0.40);
+    box-shadow:
+        0 16px 30px rgba(245, 158, 11, 0.18),
+        0 8px 12px rgba(245, 158, 11, 0.12),
+        0 2px 4px rgba(0, 0, 0, 0.06);
+}
+html:not(.dark-mode) .toast--error {
+    border-color: rgba(239, 68, 68, 0.40);
+    box-shadow:
+        0 16px 30px rgba(239, 68, 68, 0.18),
+        0 8px 12px rgba(239, 68, 68, 0.12),
+        0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* efeito hover no claro: fica um pouco mais "elevado" */
+html:not(.dark-mode) .toast:hover {
+    box-shadow:
+        0 18px 36px rgba(0, 0, 0, 0.14),
+        0 10px 16px rgba(0, 0, 0, 0.10);
+}
+
+/* -------- MODO ESCURO -------- */
+html.dark-mode .toast {
+    background-color: #2d3748;
+    color: #e2e8f0;
+    border: 1px solid #4a5568;
+    box-shadow:
+        0 14px 28px rgba(0, 0, 0, 0.6),
+        0 8px 12px rgba(0, 0, 0, 0.4);
+}
+html.dark-mode .toast__icon {
+    color: var(--toast-accent, #63b3ed);
+}
+html.dark-mode .toast__progress {
+    background: var(--toast-accent, #63b3ed);
+}
+
+/* -------- ANIMAÇÕES -------- */
+.toast-enter {
+    animation: toast-enter-anim 0.25s ease-out forwards;
+}
+@keyframes toast-enter-anim {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.toast-exit {
+    animation: toast-exit-anim 0.2s ease-in forwards;
+}
+@keyframes toast-exit-anim {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px) scale(0.96);
+    }
+}
+
+/* barra de progresso indo de 100% pra 0% */
+@keyframes toast-progress-deplete {
+    from { width: 100%; }
+    to   { width: 0%; }
+}
+
+
+
+

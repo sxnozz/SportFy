@@ -1,131 +1,170 @@
 /**
- * Adiciona um "ouvinte" que espera o documento HTML ser completamente
- * carregado antes de executar qualquer script. É a entrada principal
- * do script da página.
+ * Este script cuida de duas coisas principais:
+ * 1. Exibir os campos corretos de métricas conforme o esporte escolhido.
+ * 2. Deixar cada card de métrica clicável: quando clica,
+ *    - atualiza o gráfico radar
+ *    - destaca visualmente o card selecionado
+ *    - esconde a mensagem "Nenhuma métrica selecionada"
  */
+
 document.addEventListener('DOMContentLoaded', function() {
 
-    // --- Bloco 1: Funcionalidade do Formulário Dinâmico ---
-
+    /* ==========================================================
+     * BLOCO 1: FORMULÁRIO DINÂMICO DE "ADICIONAR NOVA MÉTRICA"
+     * Mostra apenas os campos do esporte selecionado (futebol/basquete/vôlei).
+     * Esse bloco só roda nas páginas que têm o <select id="modalidade">,
+     * então não quebra outras telas.
+     * ========================================================== */
     const modalidadeSelect = document.getElementById('modalidade');
 
-    // Verifica se o <select> de modalidade existe na página atual
     if (modalidadeSelect) {
 
         /**
-         * Função responsável por exibir/ocultar os campos de métrica
-         * com base no esporte selecionado no dropdown.
+         * Mostra o grupo de inputs correspondente ao esporte escolhido e
+         * esconde os outros.
          */
         const updateMetricFieldsVisibility = () => {
             const selectedSport = modalidadeSelect.value;
-            
-            // Normaliza o valor (remove acentos, converte para minúsculas)
-            // para criar um ID de destino confiável.
-            // Ex: "Futebol" -> "futebol"
-            const normalizedSport = selectedSport ? selectedSport.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() : '';
-            
-            // Constrói o ID do <div> que deve ser exibido (ex: "metricas_futebol")
+
+            // Normaliza o texto pra gerar o ID dos blocos
+            // Ex: "Vôlei" -> "volei"
+            const normalizedSport = selectedSport
+                ? selectedSport
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '') // remove acentos
+                    .toLowerCase()
+                : '';
+
+            // Ex: "metricas_volei", "metricas_futebol"
             const targetId = 'metricas_' + normalizedSport;
 
-            // Itera sobre todos os <div> com a classe .metric-fields
+            // Esconde todos os blocos e mostra só o correspondente
             document.querySelectorAll('.metric-fields').forEach(div => {
-                // Se o ID do <div> for igual ao ID de destino, mostra.
                 if (div.id === targetId) {
                     div.style.display = 'block';
                 } else {
-                    // Se não for, oculta.
                     div.style.display = 'none';
                 }
             });
         };
 
-        // Adiciona o evento "change" ao dropdown
+        // Atualiza quando troca o select
         modalidadeSelect.addEventListener('change', updateMetricFieldsVisibility);
-        
-        // Executa a função uma vez no carregamento da página
-        // para garantir que o estado inicial do formulário esteja correto.
+
+        // Atualiza já no carregamento (caso já venha preenchido em edição, por ex.)
         updateMetricFieldsVisibility();
     }
 
-    // --- Bloco 2: Funcionalidade do Gráfico Interativo ---
+    /* ==========================================================
+     * BLOCO 2: INTERAÇÃO DOS CARDS DE MÉTRICA + GRÁFICO RADAR
+     * - Quando o usuário clica em um card:
+     *   -> Lê os dados do card (labels/values)
+     *   -> Desenha o gráfico radar (drawRadarChart)
+     *   -> Marca visualmente esse card como "selecionado"
+     *   -> Mostra o gráfico e esconde o placeholder
+     * ========================================================== */
 
-    const metricCards = document.querySelectorAll('.metric-card');
-    const chartPlaceholder = document.getElementById('chart-placeholder');
-    const chartContainer = document.getElementById('radarChart');
+    const metricCards = document.querySelectorAll('.metric-card'); // todos os cards
+    const chartPlaceholder = document.getElementById('chart-placeholder'); // texto "nenhuma métrica selecionada"
+    const chartCanvas = document.getElementById('radarChart'); // o <canvas> do gráfico
 
-    // Adiciona um evento de clique para cada "card de métrica"
+    // Garante que o canvas começa oculto, e só aparece depois do 1º clique
+    if (chartCanvas) {
+        chartCanvas.style.display = 'none';
+    }
+
+    // Adiciona clique em cada card
     metricCards.forEach(card => {
         card.addEventListener('click', function() {
             try {
-                // Tenta extrair os dados (labels e valores) dos atributos 'data-' do card clicado
-                const labels = JSON.parse(this.dataset.labels);
-                const values = JSON.parse(this.dataset.values);
-                const sportData = { labels: labels, data: values };
+                // 1. Pega dados do card clicado
+                const labels = JSON.parse(this.dataset.labels);   // ex: ["Gols","Assistências","Desarmes"]
+                const values = JSON.parse(this.dataset.values);   // ex: [2,1,5]
 
-                // Chama a função para desenhar/atualizar o gráfico com os novos dados
+                const sportData = {
+                    labels: labels,
+                    data: values
+                };
+
+                // 2. Atualiza o gráfico radar com esses dados
                 drawRadarChart(sportData);
 
-                // Oculta o placeholder (ex: "Clique em um card")
-                if (chartPlaceholder) chartPlaceholder.style.display = 'none';
-                // Exibe o <canvas> do gráfico
-                if (chartContainer) chartContainer.style.display = 'block';
+                // 3. Marca visualmente este card como "selecionado" e
+                //    remove o destaque dos outros.
+                metricCards.forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+
+                // 4. Esconde o placeholder e mostra o gráfico
+                if (chartPlaceholder) {
+                    chartPlaceholder.style.display = 'none';
+                }
+                if (chartCanvas) {
+                    chartCanvas.style.display = 'block';
+                }
 
             } catch (e) {
-                // Captura erros caso os dados JSON nos atributos 'data-' estejam mal formatados
                 console.error("Erro ao processar dados do card para o gráfico:", e);
             }
         });
     });
-
-    // Garante que o container do gráfico comece oculto
-    if (chartContainer) {
-        chartContainer.style.display = 'none';
-    }
 });
 
 
-/**
- * Função principal que desenha ou atualiza o gráfico de radar (Radar Chart).
- * Utiliza a biblioteca Chart.js.
- * @param {object} sportData - Um objeto contendo { labels: [], data: [] }
- */
+/* ==========================================================
+ * FUNÇÃO GLOBAL: drawRadarChart
+ * Desenha ou atualiza o gráfico de radar usando Chart.js.
+ * Também ajusta as cores de acordo com o tema atual (claro/escuro).
+ * É chamada sempre que o usuário clica em um card de métrica.
+ * ========================================================== */
 function drawRadarChart(sportData) {
     const ctx = document.getElementById('radarChart');
-    if (!ctx || !sportData) return; // Aborta se o <canvas> ou os dados não existirem
+    if (!ctx || !sportData) return;
 
-    // Verifica se um gráfico já existe na variável global (window)
-    // Se sim, destrói a instância anterior para evitar sobreposição
+    // Se já existe um gráfico desenhado, destrói antes de redesenhar
     if (window.myRadarChart) {
         window.myRadarChart.destroy();
     }
 
-    // Armazena os dados atuais globalmente (útil para redimensionamento, etc.)
+    // Guarda os dados do gráfico atual globalmente
+    // (isso é usado quando o usuário troca o tema claro/escuro)
     window.currentChartData = sportData;
 
-    // Verifica se o modo escuro está ativo no HTML
+    // Checa se está no modo escuro (html.dark-mode)
     const isDarkMode = document.documentElement.classList.contains('dark-mode');
 
-    // --- Definição das Paletas de Cores (Dark/Light Mode) ---
-    // Define cores diferentes para os elementos do gráfico com base no tema
-    const pointLabelColor = isDarkMode ? 'rgba(226, 232, 240, 0.9)' : 'rgba(52, 58, 64, 1)';
-    const gridColor = isDarkMode ? 'rgba(74, 85, 104, 0.7)' : 'rgba(200, 200, 200, 1)';
-    const bgColor = isDarkMode ? 'rgba(99, 179, 237, 0.4)' : 'rgba(54, 162, 235, 0.5)';
-    const borderColor = isDarkMode ? 'rgb(99, 179, 237)' : 'rgb(41, 128, 185)';
-    const pointBorderColor = isDarkMode ? '#2d3748' : '#fff';
+    // Paleta de cores dinâmica por tema
+    const pointLabelColor = isDarkMode
+        ? 'rgba(226, 232, 240, 0.9)'
+        : 'rgba(52, 58, 64, 1)';
 
-    // Verifica se o plugin 'ChartDataLabels' (para mostrar valores no gráfico) foi carregado
+    const gridColor = isDarkMode
+        ? 'rgba(74, 85, 104, 0.7)'
+        : 'rgba(200, 200, 200, 1)';
+
+    const bgColor = isDarkMode
+        ? 'rgba(99, 179, 237, 0.4)'
+        : 'rgba(54, 162, 235, 0.5)';
+
+    const borderColor = isDarkMode
+        ? 'rgb(99, 179, 237)'
+        : 'rgb(41, 128, 185)';
+
+    const pointBorderColor = isDarkMode
+        ? '#2d3748'
+        : '#fff';
+
+    // Registra o plugin de datalabels, se estiver disponível
     if (typeof ChartDataLabels !== 'undefined') {
-        // Registra o plugin no Chart.js
         Chart.register(ChartDataLabels);
     }
 
-    // Cria a nova instância do gráfico e a armazena na variável global
+    // Cria o radar chart
     window.myRadarChart = new Chart(ctx, {
         type: 'radar',
         data: {
-            labels: sportData.labels, // Nomes dos eixos (ex: "Força", "Velocidade")
+            labels: sportData.labels,
             datasets: [{
-                data: sportData.data, // Valores numéricos
+                data: sportData.data,
                 fill: true,
                 backgroundColor: bgColor,
                 borderColor: borderColor,
@@ -139,43 +178,34 @@ function drawRadarChart(sportData) {
             }]
         },
         options: {
-            maintainAspectRatio: false, // Permite que o gráfico preencha o container
+            maintainAspectRatio: false,
             plugins: {
-                // Oculta a legenda padrão do Chart.js
-                legend: { display: false },
-                
-                // Configura o plugin 'datalabels' (os números em cima dos pontos)
+                legend: { display: false }, // esconde legenda "Dataset 1"
                 datalabels: {
                     backgroundColor: 'rgba(0, 0, 0, 0.7)',
                     borderRadius: 4,
                     color: 'white',
                     font: { weight: 'bold' },
-                    padding: 6,
+                    padding: 6
                 }
             },
-            // Configuração dos eixos (escala 'r' = radial)
             scales: {
                 r: {
-                    // Configura os rótulos dos eixos (ex: "Força", "Velocidade")
                     pointLabels: {
+                        // nomes dos eixos (ex: Gols, Assistências...)
                         font: { size: 14, weight: 'bold' },
                         color: pointLabelColor,
-                        padding: 30 // Adiciona espaço para o texto não sobrepor o gráfico
+                        padding: 30
                     },
-                    // Configura as linhas da grade
                     grid: {
                         color: gridColor
                     },
-                    // Configura os "ticks" (marcações de escala, ex: 0, 5, 10)
                     ticks: {
-                        display: false, // Oculta os números da escala
+                        display: false, // some com os números 0,5,10...
                         backdropColor: 'transparent'
                     },
-                    suggestedMin: 0, // Garante que a escala comece em 0
-                    
-                    // Define dinamicamente o valor máximo da escala
-                    // Pega o maior valor dos dados (ou 10) e soma 5,
-                    // para o gráfico não ficar "colado" na borda.
+                    suggestedMin: 0,
+                    // define limite máximo da escala com uma folguinha
                     suggestedMax: Math.max(...sportData.data, 10) + 5
                 }
             }

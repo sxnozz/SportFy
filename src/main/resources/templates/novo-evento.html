@@ -2,13 +2,14 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>SportFy - Novo Evento</title>
     
+    <!-- Aplica o tema escuro salvo no localStorage antes de renderizar a página -->
     <script>
         (function() {
-            // Verifica a preferência salva no localStorage
             if (localStorage.getItem('theme') === 'dark-mode') {
-                // Aplica a classe diretamente na tag <html> ANTES da página ser desenhada
                 document.documentElement.classList.add('dark-mode');
             }
         })();
@@ -18,15 +19,18 @@
 </head>
 <body>
     
+    <!-- Cabeçalho padrão da aplicação -->
     <div th:replace="~{fragments :: header}"></div>
 
     <main class="container-main">
-        
         <div class="form-box">
             <h2 class="section-title">Criar Novo Evento</h2>
             
+            <!-- Formulário de criação de evento.
+                 th:object="${evento}" liga os campos diretamente ao objeto Evento do backend -->
             <form th:action="@{/eventos/novo}" th:object="${evento}" method="post" class="event-form">
                 
+                <!-- Seletor de modalidade do evento -->
                 <div class="form-group">
                     <label for="modalidade">Modalidade:</label>
                     <select id="modalidade" th:field="*{modalidadeEvento}" required>
@@ -37,26 +41,71 @@
                     </select>
                 </div>
                 
+                <!-- Endereço do local onde será o evento -->
                 <div class="form-group">
                     <label for="lugar">Endereço Completo do Local:</label>
-                    <input type="text" id="lugar" th:field="*{lugar}" placeholder="Ex: Praça Central, Sapucaia do Sul, RS" required>
+                    <input
+                        type="text"
+                        id="lugar"
+                        th:field="*{lugar}"
+                        placeholder="Ex: Praça Central, Sapucaia do Sul, RS"
+                        required
+                    >
                 </div>
                 
+                <!-- Data e hora do evento.
+                     OBS: o atributo min será colocado via JS para não permitir datas passadas -->
                 <div class="form-group">
                     <label for="dataHora">Data e Hora do Evento:</label>
-                    <input type="datetime-local" id="dataHora" th:field="*{dataHoraEvento}" required>
+                    <input
+                        type="datetime-local"
+                        id="dataHora"
+                        th:field="*{dataHoraEvento}"
+                        required
+                    >
                 </div>
                 
+                <!-- Campo de descrição / observações livres -->
                 <div class="form-group">
                     <label for="descricao">Descrição:</label>
-                    <textarea id="descricao" th:field="*{descricao}" rows="4" placeholder="Alguma informação adicional? (Ex: Levar bola, etc.)"></textarea>
+                    <textarea
+                        id="descricao"
+                        th:field="*{descricao}"
+                        rows="4"
+                        placeholder="Alguma informação adicional? (Ex: Levar bola, etc.)"
+                    ></textarea>
                 </div>
                 
+                <!-- Botão para enviar o formulário -->
                 <button type="submit" class="btn-submit-form">Criar Evento</button>
             </form>
         </div>
     </main>
     
     <script th:src="@{/js/theme.js}"></script>
+
+    <script>
+        // Validação de data/hora no front:
+        // Impede o usuário de criar evento no passado definindo 'min' dinamicamente.
+        (function() {
+            const dateTimeInput = document.getElementById('dataHora');
+            if (!dateTimeInput) return;
+
+            // Gera a data/hora atual no formato "yyyy-MM-ddTHH:mm"
+            const now = new Date();
+
+            // Ajusta para timezone local do usuário (sem segundos)
+            const year   = now.getFullYear();
+            const month  = String(now.getMonth() + 1).padStart(2, '0'); // meses começam em 0
+            const day    = String(now.getDate()).padStart(2, '0');
+            const hour   = String(now.getHours()).padStart(2, '0');
+            const minute = String(now.getMinutes()).padStart(2, '0');
+
+            const localISO = `${year}-${month}-${day}T${hour}:${minute}`;
+
+            // Seta o mínimo permitido no campo
+            dateTimeInput.min = localISO;
+        })();
+    </script>
 </body>
 </html>
