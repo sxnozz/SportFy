@@ -1,5 +1,4 @@
-// Novo arquivo: br/edu/ifsul/tcc/sportfy/config/LoginInterceptor.java
-package br.edu.ifsul.tcc.sportfy.controller; // Ou .controller se você criou a pasta lá
+package br.edu.ifsul.tcc.sportfy.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
