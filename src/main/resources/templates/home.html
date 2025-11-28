@@ -18,12 +18,12 @@
 </head>
 <body>
 
-    <!-- Cabeçalho comum -->
+    <!-- Cabeçalho -->
     <div th:replace="~{fragments :: header}"></div>
 
     <main class="home-container">
 
-        <!-- Sidebar de filtros: envia GET para "/" e atualiza lista -->
+        <!-- Sidebar de filtros, envia GET para "/" e atualiza lista -->
         <aside class="filters-sidebar" aria-label="Filtros">
             <h3>Filtros</h3>
             <form th:action="@{/}" method="get" id="filter-form">
@@ -39,7 +39,7 @@
             </form>
         </aside>
 
-        <!-- Seção principal: lista de próximos eventos -->
+        <!-- Seção principal, lista de próximos eventos -->
         <section class="events-section" aria-live="polite">
             <h2 class="main-title">Próximos Eventos</h2>
 

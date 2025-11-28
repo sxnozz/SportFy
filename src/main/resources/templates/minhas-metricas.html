@@ -21,20 +21,17 @@
 </head>
 <body>
 
-    <!-- Header padrão da aplicação (logo, navegação, usuário logado) -->
+    <!-- Header -->
     <div th:replace="~{fragments :: header}"></div>
 
     <main class="container-main">
         <!-- Título principal da página -->
         <h2 class="main-title">Minhas Métricas</h2>
 
-        <!-- ============================= -->
         <!-- FORMULÁRIO: ADICIONAR MÉTRICA -->
-        <!-- ============================= -->
         <div class="form-box">
             <h3 class="section-title">Adicionar Nova Métrica</h3>
 
-            <!-- th:object cria binding direto com o objeto novaMetrica vindo do controller -->
             <form th:action="@{/metricas/nova}"
                   th:object="${novaMetrica}"
                   method="post"
@@ -109,9 +106,8 @@
             </form>
         </div>
 
-        <!-- ===================================== -->
         <!-- LISTA DE MÉTRICAS JÁ SALVAS (HISTÓRICO) -->
-        <!-- ===================================== -->
+
         <div class="history-section mt-40">
             <h3 class="main-title small">Histórico de Desempenho</h3>
             <p class="page-subtitle-helper">Clique em um card para visualizar o gráfico</p>
@@ -124,8 +120,7 @@
             <!-- Lista de cards de métricas -->
             <div class="event-list" th:unless="${metricas.isEmpty()}">
 
-                <!-- Cada .metric-card representa um dia/esporte e alimenta o gráfico.
-                     data-labels e data-values são lidos pelo main.js -->
+                <!-- Cada .metric-card representa um dia/esporte e alimenta o gráfico. -->
                 <div th:each="metrica : ${metricas}"
                      class="metric-card"
                      th:data-labels="${chartHelper.getLabelsAsJson(metrica.esporte)}"
@@ -185,9 +180,8 @@
             </div>
         </div>
 
-        <!-- ============================= -->
         <!-- ÁREA DO GRÁFICO RADAR         -->
-        <!-- ============================= -->
+
         <div class="chart-section form-box chart-wrapper">
             <h3 class="section-title">Visualização de Desempenho</h3>
 
@@ -206,7 +200,7 @@
     <!-- JS principal da página (form dinâmico + gráfico radar + seleção de card) -->
     <script th:src="@{/js/main.js}"></script>
 
-    <!-- JS do tema claro/escuro (toggle no header) -->
+    <!-- JS do tema claro/escuro -->
     <script th:src="@{/js/theme.js}"></script>
 </body>
 </html>

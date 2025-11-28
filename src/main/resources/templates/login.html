@@ -13,13 +13,11 @@
         })();
     </script>
 
-    <!-- Importa o CSS principal -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body class="auth-page">
 <div class="container">
-    <!-- Título principal -->
     <h1 class="auth-title">SportFy</h1>
 
     <!-- Mensagens dinâmicas de feedback -->
@@ -52,7 +50,6 @@
             <input id="senha" type="password" name="senha" placeholder="Insira sua senha" 
                    required autocomplete="current-password">
 
-            <!-- Token CSRF -->
             <div th:if="${_csrf != null}">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             </div>

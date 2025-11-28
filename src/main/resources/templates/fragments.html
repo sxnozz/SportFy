@@ -1,6 +1,5 @@
 <div th:fragment="header">
 
-    <!-- Header fixo usado em todas as páginas -->
     <header class="main-header">
         
         <!-- Lado esquerdo: logo + navegação -->
@@ -65,7 +64,7 @@
             <!-- Bloco com as infos do usuário logado -->
             <div th:if="${session.usuarioLogado != null}" class="user-info">
                 
-                <!-- Foto de perfil no header (ou placeholder com a inicial do nome) -->
+                <!-- Foto de perfil no header (ou a inicial do nome) -->
                 <div class="header-profile-pic-container">
                     <a th:href="@{/perfil/{id}(id=${session.usuarioLogado.id_usuario})}"
                        title="Ver meu Perfil">
@@ -121,15 +120,12 @@
     
     </header>
 
-       <!-- ====================================================== -->
-    <!-- TOASTS (notificações flutuantes reutilizáveis)         -->
-    <!-- ====================================================== -->
+       
+    <!-- TOASTS -->
 
-    <!-- container fixo onde os toasts aparecem empilhados -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- dados do toast vindos do controller via FlashAttribute -->
-    <!-- se não tiver toastMessage no model, esse bloco nem aparece -->
+   
     <div id="toast-data"
          th:if="${toastMessage != null}"
          th:data-msg="${toastMessage}"
@@ -137,19 +133,17 @@
          style="display:none;">
     </div>
 
-    <!-- script que sabe montar/exibir o toast -->
     <script th:src="@{/js/toast.js}"></script>
 
     <!-- script que lê os dados e dispara o toast -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const dataEl = document.getElementById('toast-data');
-            if (!dataEl) return; // não tem toast pra mostrar
+            if (!dataEl) return; 
 
             const message = dataEl.getAttribute('data-msg') || '';
             let type = dataEl.getAttribute('data-type') || 'success';
 
-            // fallback só por segurança
             if (!type || type === 'null' || type === '') {
                 type = 'success';
             }

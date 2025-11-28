@@ -20,7 +20,7 @@
 </head>
 <body>
     
-    <!-- Header global (menu, perfil logado, troca de tema etc.) -->
+    <!-- Cabeçalho-->
     <div th:replace="~{fragments :: header}"></div>
 
     <main class="container-main">
@@ -107,7 +107,7 @@
             <div class="participants-section">
                 <h3 th:text="'Participantes (' + ${evento.participantes.size()} + ')'"></h3>
 
-                <!-- Casos especiais: nenhum participante -->
+                <!-- Nenhum participante -->
                 <div th:if="${evento.participantes.isEmpty() and evento.dataHoraEvento.isAfter(#temporals.createNow())}">
                     <p>Seja o primeiro a participar!</p>
                 </div>
@@ -141,7 +141,7 @@
             <div class="comments-section">
                 <h3>Comentários</h3>
                 
-                <!-- Formulário para comentar: só aparece se o evento ainda não aconteceu -->
+                <!-- Formulário para comentar, só aparece se o evento ainda não aconteceu -->
                 <form th:action="@{/evento/{id}/comentar(id=${evento.id_evento})}"
                       method="post"
                       class="comment-form"
