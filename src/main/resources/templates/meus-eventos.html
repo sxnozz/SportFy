@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- Responsivo em mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportFy - Meus Eventos</title>
+
+    <!-- Aplica tema salvo antes do render -->
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Cabeçalho compartilhado via fragmento Thymeleaf -->
+    <div th:replace="~{fragments :: header}"></div>
+
+    <main class="container-main">
+        <div class="content-wrapper-medium">
+            <section class="events-section">
+                <h2 class="main-title">Meus Eventos Criados</h2>
+
+                <!-- Se não há eventos, mostra mensagem e CTA -->
+                <div th:if="${eventos.isEmpty()}" class="no-events-message" role="status" aria-live="polite">
+                    <p>Você ainda não criou nenhum evento.</p>
+                    <a th:href="@{/eventos/novo}" class="btn-ver-mais">Criar meu primeiro evento</a>
+                </div>
+
+                <!-- Lista de eventos (renderizada quando há eventos) -->
+                <div th:unless="${eventos.isEmpty()}" class="event-list">
+                    <div th:each="evento : ${eventos}" class="event-card">
+                        <!-- Exibe campos principais do evento -->
+                        <h3 th:text="${evento.modalidadeEvento}">Modalidade do Evento</h3>
+                        <p><strong>Local:</strong> <span th:text="${evento.lugar}"></span></p>
+                        <p><strong>Data:</strong> <span th:text="${#temporals.format(evento.dataHoraEvento, 'dd/MM/yyyy HH:mm')}"></span></p>
+                        <p><strong>Criador:</strong> <span th:text="${evento.usuarioCriador.nome}"></span></p>
+
+                        <!-- Link para detalhes (preserva parâmetro 'from') -->
+                        <a th:href="@{/evento/{id}(id=${evento.id_evento}, from='eventosInscritos')}" class="btn-ver-mais">Ver Detalhes</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

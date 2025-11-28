@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SportFy - Login</title>
+
+    <!-- Script: ativa o tema escuro se estiver salvo -->
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
+    <!-- Importa o CSS principal -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="auth-page">
+<div class="container">
+    <!-- Título principal -->
+    <h1 class="auth-title">SportFy</h1>
+
+    <!-- Mensagens dinâmicas de feedback -->
+    <div th:if="${param.error}" class="alert alert-error">
+        <strong>Erro:</strong> E-mail ou senha inválidos.
+        <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+    </div>
+    <div th:if="${param.logout}" class="alert alert-success">
+        Você saiu com sucesso.
+        <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+    </div>
+    <div th:if="${param.cadastroSucesso}" class="alert alert-success">
+        Cadastro realizado com sucesso! Faça o login.
+        <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+    </div>
+
+    <!-- Formulário de login -->
+    <div class="form-box">
+        <h2>Login</h2>
+
+        <form th:action="@{/login}" method="post" autocomplete="off">
+            
+            <!-- Campo: e-mail -->
+            <label for="email">E-mail</label>
+            <input id="email" type="email" name="email" placeholder="Insira seu email" 
+                   required autofocus autocomplete="email">
+
+            <!-- Campo: senha -->
+            <label for="senha">Senha</label>
+            <input id="senha" type="password" name="senha" placeholder="Insira sua senha" 
+                   required autocomplete="current-password">
+
+            <!-- Token CSRF -->
+            <div th:if="${_csrf != null}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            </div>
+
+            <!-- Botão de envio -->
+            <button type="submit">Entrar</button>
+        </form>
+
+        <!-- Link para cadastro -->
+        <p class="link">
+            Não tem uma conta?
+            <a th:href="@{/cadastro}"><span>Clique aqui</span></a>
+        </p>
+    </div>
+</div>
+
+<!-- Script do tema -->
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

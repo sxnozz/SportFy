@@ -1,0 +1,164 @@
+<div th:fragment="header">
+
+    <!-- Header fixo usado em todas as páginas -->
+    <header class="main-header">
+        
+        <!-- Lado esquerdo: logo + navegação -->
+        <div class="header-left">
+            <!-- Logo volta pra home -->
+            <a th:href="@{/}" class="logo">SportFy</a>
+
+            <!-- Navegação principal -->
+            <nav class="main-nav">
+                <ul>
+                    <!-- Aba "Eventos" (home) -->
+                    <li>
+                        <a th:href="@{/}"
+                           th:classappend="${activePage == 'eventos' ? 'active' : ''}">
+                           Eventos
+                        </a>
+                    </li>
+
+                    <!-- As próximas abas só aparecem se o usuário estiver logado -->
+                    <li th:if="${session.usuarioLogado != null}">
+                        <a th:href="@{/meus-eventos}"
+                           th:classappend="${activePage == 'meusEventos' ? 'active' : ''}">
+                           Meus Eventos
+                        </a>
+                    </li>
+
+                    <li th:if="${session.usuarioLogado != null}">
+                        <a th:href="@{/eventos-inscritos}"
+                           th:classappend="${activePage == 'eventosInscritos' ? 'active' : ''}">
+                           Eventos Inscritos
+                        </a>
+                    </li>
+
+                    <li th:if="${session.usuarioLogado != null}">
+                        <a th:href="@{/minhas-metricas}"
+                           th:classappend="${activePage == 'minhasMetricas' ? 'active' : ''}">
+                           Minhas Métricas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Lado direito: troca de tema, criar evento, perfil/ações -->
+        <div class="header-right">
+            
+            <!-- Botão de alternar Light/Dark -->
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+            </div>
+
+            <!-- Botão para criar evento (só aparece logado) -->
+            <a th:if="${session.usuarioLogado != null}"
+               th:href="@{/eventos/novo}"
+               class="btn-header-create">
+               Criar Evento
+            </a>
+            
+            <!-- Bloco com as infos do usuário logado -->
+            <div th:if="${session.usuarioLogado != null}" class="user-info">
+                
+                <!-- Foto de perfil no header (ou placeholder com a inicial do nome) -->
+                <div class="header-profile-pic-container">
+                    <a th:href="@{/perfil/{id}(id=${session.usuarioLogado.id_usuario})}"
+                       title="Ver meu Perfil">
+                        <img th:if="${session.usuarioLogado.fotoPerfilUrl}"
+                             th:src="@{/uploads/{filename}(filename=${session.usuarioLogado.fotoPerfilUrl})}"
+                             alt="Foto de Perfil"
+                             class="header-profile-pic">
+
+                        <div th:unless="${session.usuarioLogado.fotoPerfilUrl}"
+                             class="header-profile-pic-placeholder"
+                             th:text="${#strings.substring(session.usuarioLogado.nome, 0, 1).toUpperCase()}">
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Saudação + botões de ação rápidos -->
+                <div>
+                    <span th:text="'Olá, ' + ${session.usuarioLogado.nome}">Olá, Usuário</span>
+                    
+                    <div class="user-actions">
+                        <!-- Atalho para editar o perfil -->
+                        <a th:href="@{/perfil/editar}" class="user-action-btn btn-edit-profile">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            Editar Perfil
+                        </a>
+
+                        <!-- Logout -->
+                        <a th:href="@{/logout}" class="user-action-btn btn-logout">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            Sair
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Se NÃO estiver logado: botões Login/Cadastro -->
+            <div th:unless="${session.usuarioLogado != null}" class="header-guest-actions">
+                <a th:href="@{/login}" class="btn-login">Login</a>
+                <a th:href="@{/cadastro}" class="btn-register-header">Cadastrar</a>
+            </div>
+        </div>
+    
+    </header>
+
+       <!-- ====================================================== -->
+    <!-- TOASTS (notificações flutuantes reutilizáveis)         -->
+    <!-- ====================================================== -->
+
+    <!-- container fixo onde os toasts aparecem empilhados -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- dados do toast vindos do controller via FlashAttribute -->
+    <!-- se não tiver toastMessage no model, esse bloco nem aparece -->
+    <div id="toast-data"
+         th:if="${toastMessage != null}"
+         th:data-msg="${toastMessage}"
+         th:data-type="${toastType != null ? toastType : 'success'}"
+         style="display:none;">
+    </div>
+
+    <!-- script que sabe montar/exibir o toast -->
+    <script th:src="@{/js/toast.js}"></script>
+
+    <!-- script que lê os dados e dispara o toast -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dataEl = document.getElementById('toast-data');
+            if (!dataEl) return; // não tem toast pra mostrar
+
+            const message = dataEl.getAttribute('data-msg') || '';
+            let type = dataEl.getAttribute('data-type') || 'success';
+
+            // fallback só por segurança
+            if (!type || type === 'null' || type === '') {
+                type = 'success';
+            }
+
+            if (message.trim() !== '') {
+                showToast(message, type);
+            }
+        });
+    </script>
+
+
+</div>

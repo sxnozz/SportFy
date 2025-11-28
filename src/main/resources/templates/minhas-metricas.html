@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SportFy - Minhas Métricas</title>
+
+    <!-- Mantém o tema salvo (claro/escuro) antes de pintar a tela -->
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
+    <!-- Chart.js para o radar -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Header padrão da aplicação (logo, navegação, usuário logado) -->
+    <div th:replace="~{fragments :: header}"></div>
+
+    <main class="container-main">
+        <!-- Título principal da página -->
+        <h2 class="main-title">Minhas Métricas</h2>
+
+        <!-- ============================= -->
+        <!-- FORMULÁRIO: ADICIONAR MÉTRICA -->
+        <!-- ============================= -->
+        <div class="form-box">
+            <h3 class="section-title">Adicionar Nova Métrica</h3>
+
+            <!-- th:object cria binding direto com o objeto novaMetrica vindo do controller -->
+            <form th:action="@{/metricas/nova}"
+                  th:object="${novaMetrica}"
+                  method="post"
+                  class="event-form">
+
+                <!-- Seleção de esporte/modalidade -->
+                <div class="form-group">
+                    <label for="modalidade">Modalidade:</label>
+                    <select id="modalidade" th:field="*{esporte}" required>
+                        <option value="">Selecione um esporte...</option>
+                        <option value="Futebol">Futebol</option>
+                        <option value="Basquete">Basquete</option>
+                        <option value="Vôlei">Vôlei</option>
+                    </select>
+                </div>
+
+                <!-- Data da atividade física -->
+                <div class="form-group">
+                    <label for="diaMetrica">Data da Atividade:</label>
+                    <input type="date" id="diaMetrica" th:field="*{diaMetrica}" required>
+                </div>
+
+                <!-- Campos exibidos apenas se "Futebol" estiver selecionado -->
+                <div id="metricas_futebol" class="metric-fields" style="display:none;">
+                    <div class="form-group">
+                        <label>Gols:</label>
+                        <input type="number" th:field="*{gols}" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Assistências:</label>
+                        <input type="number" th:field="*{assistencias_futebol}" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Desarmes:</label>
+                        <input type="number" th:field="*{desarmes}" value="0">
+                    </div>
+                </div>
+
+                <!-- Campos exibidos apenas se "Basquete" estiver selecionado -->
+                <div id="metricas_basquete" class="metric-fields" style="display:none;">
+                    <div class="form-group">
+                        <label>Pontos:</label>
+                        <input type="number" th:field="*{pontos_basquete}" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Assistências:</label>
+                        <input type="number" th:field="*{assistencias_basquete}" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Rebotes:</label>
+                        <input type="number" th:field="*{rebotes}" value="0">
+                    </div>
+                </div>
+
+                <!-- Campos exibidos apenas se "Vôlei" estiver selecionado -->
+                <div id="metricas_volei" class="metric-fields" style="display:none;">
+                    <div class="form-group">
+                        <label>Pontos:</label>
+                        <input type="number" th:field="*{pontos_volei}" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Aces:</label>
+                        <input type="number" th:field="*{aces}" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Bloqueios:</label>
+                        <input type="number" th:field="*{bloqueios}" value="0">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit-form">Salvar Métrica</button>
+            </form>
+        </div>
+
+        <!-- ===================================== -->
+        <!-- LISTA DE MÉTRICAS JÁ SALVAS (HISTÓRICO) -->
+        <!-- ===================================== -->
+        <div class="history-section mt-40">
+            <h3 class="main-title small">Histórico de Desempenho</h3>
+            <p class="page-subtitle-helper">Clique em um card para visualizar o gráfico</p>
+
+            <!-- Caso o usuário não tenha nenhuma métrica -->
+            <div th:if="${metricas.isEmpty()}" class="no-events-message">
+                <p>Você ainda não registrou nenhuma métrica.</p>
+            </div>
+
+            <!-- Lista de cards de métricas -->
+            <div class="event-list" th:unless="${metricas.isEmpty()}">
+
+                <!-- Cada .metric-card representa um dia/esporte e alimenta o gráfico.
+                     data-labels e data-values são lidos pelo main.js -->
+                <div th:each="metrica : ${metricas}"
+                     class="metric-card"
+                     th:data-labels="${chartHelper.getLabelsAsJson(metrica.esporte)}"
+                     th:data-values="${chartHelper.getValuesAsJson(metrica)}">
+
+                    <div class="card-header">
+                        <h4>
+                            <span th:text="${metrica.esporte}"></span>
+                            -
+                            <span th:text="${#temporals.format(metrica.diaMetrica, 'dd/MM/yyyy')}"></span>
+                        </h4>
+
+                        <div class="card-actions">
+                            <!-- Botão para editar essa métrica -->
+                            <a th:href="@{/metricas/editar/{id}(id=${metrica.id_metrica})}"
+                               class="btn-edit">Editar</a>
+
+                            
+                            <form th:action="@{/metricas/excluir/{id}(id=${metrica.id_metrica})}"
+                                  method="post">
+                                <button type="submit" class="btn-delete">Excluir</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Lista de detalhes numéricos da métrica -->
+                    <ul class="metric-details-list">
+                        <li th:if="${metrica.gols != null}">
+                            <strong>Gols:</strong> <span th:text="${metrica.gols}"></span>
+                        </li>
+                        <li th:if="${metrica.assistencias_futebol != null}">
+                            <strong>Assistências:</strong> <span th:text="${metrica.assistencias_futebol}"></span>
+                        </li>
+                        <li th:if="${metrica.desarmes != null}">
+                            <strong>Desarmes:</strong> <span th:text="${metrica.desarmes}"></span>
+                        </li>
+                        <li th:if="${metrica.pontos_basquete != null}">
+                            <strong>Pontos:</strong> <span th:text="${metrica.pontos_basquete}"></span>
+                        </li>
+                        <li th:if="${metrica.assistencias_basquete != null}">
+                            <strong>Assistências:</strong> <span th:text="${metrica.assistencias_basquete}"></span>
+                        </li>
+                        <li th:if="${metrica.rebotes != null}">
+                            <strong>Rebotes:</strong> <span th:text="${metrica.rebotes}"></span>
+                        </li>
+                        <li th:if="${metrica.pontos_volei != null}">
+                            <strong>Pontos:</strong> <span th:text="${metrica.pontos_volei}"></span>
+                        </li>
+                        <li th:if="${metrica.aces != null}">
+                            <strong>Aces:</strong> <span th:text="${metrica.aces}"></span>
+                        </li>
+                        <li th:if="${metrica.bloqueios != null}">
+                            <strong>Bloqueios:</strong> <span th:text="${metrica.bloqueios}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================= -->
+        <!-- ÁREA DO GRÁFICO RADAR         -->
+        <!-- ============================= -->
+        <div class="chart-section form-box chart-wrapper">
+            <h3 class="section-title">Visualização de Desempenho</h3>
+
+            <div class="chart-container">
+                <!-- canvas que o Chart.js usa -->
+                <canvas id="radarChart"></canvas>
+            </div>
+
+            <!-- Mensagem padrão até o usuário clicar em algum card -->
+            <p id="chart-placeholder" class="text-center">
+                Nenhuma métrica selecionada. Clique em um card do seu histórico.
+            </p>
+        </div>
+    </main>
+
+    <!-- JS principal da página (form dinâmico + gráfico radar + seleção de card) -->
+    <script th:src="@{/js/main.js}"></script>
+
+    <!-- JS do tema claro/escuro (toggle no header) -->
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

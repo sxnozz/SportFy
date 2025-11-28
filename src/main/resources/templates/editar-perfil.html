@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- Melhora a visualização em dispositivos móveis -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SportFy - Editar Perfil</title>
+
+    <!-- Aplica o tema salvo (antes do render) -->
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Insere o header compartilhado -->
+    <div th:replace="~{fragments :: header}"></div>
+
+    <main class="container-main">
+        <div class="form-box">
+
+            <h2 class="form-title">Editar Perfil</h2>
+
+            <!-- Formulário envia multipart (imagem) e usa th:object para binding -->
+            <form th:action="@{/perfil/editar}" th:object="${usuario}" method="post" enctype="multipart/form-data" class="event-form">
+
+                <!-- BIO -->
+                <div class="form-group">
+                    <label for="bio">Sua Bio:</label>
+                    <textarea id="bio" th:field="*{bio}" rows="4" placeholder="Fale um pouco sobre você..."></textarea>
+                </div>
+
+                <!-- UPLOAD FOTO -->
+                <div class="form-group">
+                    <label for="fotoFile">Foto de Perfil:</label>
+
+                    <!-- input real (escondido para estilizar) -->
+                    <input type="file" id="fotoFile" name="fotoFile" accept="image/png, image/jpeg" class="input-file-hidden" aria-describedby="file-name-display">
+
+                    <!-- elemento visual que atua como "botão" para escolher arquivo -->
+                    <div class="input-file-group">
+                        <label for="fotoFile" class="input-file-label" role="button" aria-controls="fotoFile">
+                            <!-- ícone SVG + texto -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            Escolher arquivo
+                        </label>
+                        <span id="file-name-display" class="file-name" aria-live="polite">Nenhum arquivo escolhido</span>
+                    </div>
+
+                    <small class="form-hint">Envie uma nova imagem para alterar sua foto atual.</small>
+                </div>
+
+                <!-- Checkbox para remover foto -->
+                <div class="form-group form-checkbox-group remove-photo-group">
+                    <input type="checkbox" id="removerFoto" name="removerFoto">
+                    <label for="removerFoto">Remover foto de perfil atual</label>
+                </div>
+
+                <!-- Checkbox para perfil privado -->
+                <div class="form-group form-checkbox-group">
+                    <input type="checkbox" id="perfilPrivado" th:field="*{perfilPrivado}">
+                    <label for="perfilPrivado">Tornar meu perfil privado</label>
+                </div>
+
+                <button type="submit" class="btn-submit-form">Salvar Alterações</button>
+            </form>
+        </div>
+    </main>
+
+    <script th:src="@{/js/theme.js}"></script>
+
+    <!-- JS para mostrar nome do arquivo e desabilitar input quando 'removerFoto' estiver marcado -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fotoFile');
+            const fileDisplay = document.getElementById('file-name-display');
+            const fileLabel = document.querySelector('label[for="fotoFile"]');
+            const removeFotoCheck = document.getElementById('removerFoto');
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files.length > 0) {
+                        fileDisplay.textContent = this.files[0].name;
+                    } else {
+                        fileDisplay.textContent = 'Nenhum arquivo escolhido';
+                    }
+                });
+            }
+
+            if (removeFotoCheck) {
+                removeFotoCheck.addEventListener('change', function() {
+                    if (this.checked) {
+                        fileInput.disabled = true;
+                        fileLabel.classList.add('disabled');
+                        fileInput.value = '';
+                        fileDisplay.textContent = 'Nenhum arquivo escolhido';
+                    } else {
+                        fileInput.disabled = false;
+                        fileLabel.classList.remove('disabled');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SportFy - Cadastro</title>
+
+    <!-- Script: aplica o tema salvo no navegador -->
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
+    <!-- CSS principal do site -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="auth-page">
+<div class="container">
+    
+    <h1 class="auth-title">SportFy</h1>
+
+    <!-- Exibição de mensagens de erro -->
+    <div th:if="${param.erroSenha}" class="alert alert-error">
+        <strong>Erro:</strong> As senhas não coincidem.
+        <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+    </div>
+    <div th:if="${param.erroEmail}" class="alert alert-error">
+        <strong>Erro:</strong> Este e-mail já está cadastrado.
+        <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+    </div>
+    <div th:if="${param.erroNome}" class="alert alert-error">
+        <strong>Erro:</strong> Este nome de usuário já está em uso.
+        <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+    </div>
+
+    <!-- Caixa do formulário -->
+    <div class="form-box">
+        <h2>Cadastro</h2>
+
+        <!-- Formulário de cadastro -->
+        <form th:action="@{/cadastro}" method="post" autocomplete="off">
+            
+            <!-- Campo: nome de usuário -->
+            <label for="nome">Nome</label>
+            <input id="nome" type="text" name="nome" placeholder="Insira seu nome" 
+                   required minlength="3" autofocus>
+
+            <!-- Campo: e-mail -->
+            <label for="email">E-mail</label>
+            <input id="email" type="email" name="email" placeholder="Insira seu email" 
+                   required autocomplete="email">
+
+            <!-- Campo: senha -->
+            <label for="senha">Senha</label>
+            <input id="senha" type="password" name="senha" placeholder="Crie sua senha"
+                   required minlength="6" autocomplete="new-password">
+
+            <!-- Campo: confirmação de senha -->
+            <label for="confirmeSenha">Confirme a senha</label>
+            <input id="confirmeSenha" type="password" name="confirmeSenha" 
+                   placeholder="Confirme sua senha" required autocomplete="new-password">
+
+            <div th:if="${_csrf != null}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            </div>
+
+            <!-- Botão de envio -->
+            <button type="submit">Cadastrar</button>
+        </form>
+
+        <!-- Link para a página de login -->
+        <p class="link">
+            Já tem uma conta?
+            <a th:href="@{/login}"><span>Clique aqui</span></a>
+        </p>
+    </div>
+</div>
+
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

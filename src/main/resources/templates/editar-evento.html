@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SportFy - Editar Evento</title>
+
+    <!-- aplica dark-mode imediatamente se o usuário salvou essa preferência -->
+    <script>
+        (function () {
+            if (localStorage.getItem('theme') === 'dark-mode') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- header global -->
+    <div th:replace="~{fragments :: header}"></div>
+
+    <main class="container-main">
+        <div class="form-box">
+
+            <h2 class="form-title">Editar Evento</h2>
+
+            <!-- Mantém th:object="${evento}" -->
+            <form th:action="@{/eventos/editar/{id}(id=${evento.id_evento})}"
+                  th:object="${evento}"
+                  method="post"
+                  class="event-form">
+
+                <!-- Modalidade (somente leitura visualmente, mas enviada via hidden) -->
+                <div class="form-group">
+                    <label>Modalidade:</label>
+
+                    <!-- visual somente, estilizada pra parecer um input bloqueado -->
+                    <div class="readonly-field">
+                        <strong th:text="*{modalidadeEvento}">Futebol</strong>
+                    </div>
+
+                    <!-- esse hidden é o que realmente envia a modalidade pro backend -->
+                    <input type="hidden" th:field="*{modalidadeEvento}" />
+                </div>
+
+                <!-- Endereço -->
+                <div class="form-group">
+                    <label for="lugar">Endereço Completo do Local:</label>
+                    <input type="text"
+                           id="lugar"
+                           th:field="*{lugar}"
+                           required>
+                </div>
+
+                <!-- Data e hora -->
+                <div class="form-group">
+                    <label for="dataHora">Data e Hora do Evento:</label>
+
+                    
+                    <input type="datetime-local"
+                           id="dataHora"
+                           name="dataHoraEvento"
+                           th:value="${#temporals.format(evento.dataHoraEvento, 'yyyy-MM-dd''T''HH:mm')}"
+                           required>
+                </div>
+
+                <!-- Descrição -->
+                <div class="form-group">
+                    <label for="descricao">Descrição:</label>
+                    <textarea id="descricao"
+                              th:field="*{descricao}"
+                              rows="4"></textarea>
+                </div>
+
+                <!-- Botão salvar -->
+                <button type="submit" class="btn-submit-form">Salvar Alterações</button>
+            </form>
+        </div>
+    </main>
+
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+</html>
