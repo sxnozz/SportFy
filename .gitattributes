@@ -4,5 +4,3 @@
 
 # Ignora arquivos de frontend nas estatísticas de linguagem do GitHub
 *.html linguist-detectable=false
-*.css linguist-detectable=false
-*.js linguist-detectable=false
